@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+	<channel>
+		<description></description>
+		<title>Think Small</title>
+		<generator>Think Small</generator>
+		<link>http://www.vinoisnotouzo.com/blog</link>
+		<item><title>Six Levels of Creative Opinion</title><description>&lt;h2&gt;1. "I have no creative opinion."&lt;/h2&gt;
+&lt;p&gt;A neophyte to a subject usually starts with no opinion. There's nothing wrong with this level. It's probably better than most of the following levels.&lt;/p&gt;
+&lt;h2&gt;2. "I think we should do X."&lt;/h2&gt;
+&lt;p&gt;A person at this level is expressing their opinion in the most basic way. They have maybe done X before, and have seen it work well. Or, they're completely uninformed about whether X work would and are only enamored with their novel idea.&lt;/p&gt;
+&lt;h2&gt;3. "I think we should try X."&lt;/h2&gt;
+&lt;p&gt;A person at this level has enough experience to know that they are wrong often. Therefore this person admits that they could be wrong now, and signals to others that they aren't too bought in to their own idea.&lt;/p&gt;
+&lt;h2&gt;4. "We can either try X or Y."&lt;/h2&gt;
+&lt;p&gt;A person at this level no longer has tunnel vision to a single idea. Multiple ideas can be valid and in flight at the same time. This person has many times seen ideas they thought were good be improved on by other ideas, and is no longer attached to whichever their first idea is.&lt;/p&gt;
+&lt;h2&gt;5. "We should try all things."&lt;/h2&gt;
+&lt;p&gt;A person at this level thinks it's not worth it to limit their thinking to a finite number of possibilities. It's of course not possible to try all things, but one can at least try things and learn what doesn't work.&lt;/p&gt;
+&lt;h2&gt;6. "I have no creative opinion."&lt;/h2&gt;
+&lt;p&gt;A person at this level realizes they don't really know anything. Every creative statement is subjective and can be wrong given the right context. In the long run it's often not worth pushing any particular opinion, so long as a coherent bigger picture eventually emerges.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/11.htm</link><guid>http://www.vinoisnotouzo.com/blog/11.htm</guid><pubDate>Fri, 03 Feb 2017 02:08:33 -0000</pubDate></item><item><title>Numerical Methods for Physics Integration in Video Games</title><description>&lt;p&gt;As part of the research for my &lt;a href="https://www.youtube.com/playlist?list=PLW3Zl3wyJwWPhARNV8SH1Jev5sgdH28ka"&gt;numerical analysis series in Math for Game Developers&lt;/a&gt; I implemented and tested a number of integration techniques and compared them in an array of different situations. I'm not a game physics specialist so I don't know what the current state of the art is, but the latest/best information that I could find floating around the internet is &lt;a href="http://gafferongames.com/game-physics/integration-basics/"&gt;this post by Glenn Fiedler&lt;/a&gt;, which introduces RK4 as an alternative to Euler. But after doing some tests I found that RK4 was not as strong as other methods, so I decided to dig in further.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Correction: In an earlier version of this point I said that Mr. Fiedler argued to always use RK4 - I completely misread his article. Apologies to Mr. Fiedler.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I tested for two different situations. One is a velocity field, where a particle has no momentum and always exactly takes the velocity of the integration function. This is the case covered in your typical numerical analysis textbook, where $x' = f(x, t)$ gives the velocity as a function of position and time. This is used more often in particle systems. The other is projectile motion, where the object has momentum and has forces applied on it. Here you have to do two integrations, one for position and one for velocity. Let's look at velocity fields first, since they're the simpler case.&lt;/p&gt;
+&lt;h2&gt;Velocity Field&lt;/h2&gt;
+&lt;p&gt;I evaluated three methods:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Euler's Method, order 1&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$x_{i+1} = x_i + hf(x_i, t_i)$$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Midpoint Method, order 2&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$x_{i+1} = x_i+hf(x_i+hf(x_i, t_i), t_i+h)$$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Runge Kutta order 4&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$k_1 = f(x_i, t_i)$$
+$$k_2 = f(x_i + \frac{1}{2}k_1, t_i + \frac{1}{2}h)$$
+$$k_3 = f(x_i + \frac{1}{2}k_2, t_i + \frac{1}{2}h)$$
+$$k_4 = f(x_i + k_3, t_{i+1})$$
+$$x_{i+1} = x_i + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$$&lt;/p&gt;
+&lt;p&gt;The results are actually pretty unsurprising. RK4 of course wins hands-down. Running Euler's method at $h = 1/60$ is roughly equivalent to running Midpoint at $h = 1/8$ or RK4 at $h = 1/3$.&lt;/p&gt;
+&lt;p&gt;I don't think that's the end of the story though. Midpoint requires two evaluations and RK4 requires four. So RK4 is four times more expensive per iteration than Euler. We only have to run RK4 once per every 20 Euler evaluations to get equivalent precision. But how expensive is our evaluation function? Is evalution of $f()$ the expensive part of the particle system?&lt;/p&gt;
+&lt;p&gt;There's another factor - if you run RK4 only three times a second, you need to do some kind of interpolation the rest of the time or your particles will look very jerky. That means more memory (in addition to position we have to store velocity and interpolation time), and more complexity. On top of that, while I haven't tried it, I can't imagine that linear interpolation over an update rate of $h = 1/3$ will look any good. So maybe some other type of interpolation will be necessary, or ... ? ick. How much do you really want to save those $f()$ evaluations?&lt;/p&gt;
+&lt;p&gt;OK, so maybe it's not worth it to maintain the same precision at a larger timestep. Maybe instead we can use Midpoint or RK4 to get better precision at the same timestep? Most of the time $h = 1/60$ is a small enough timestep that you can't tell the difference between Euler and RK4. For example, take this differential equation:&lt;/p&gt;
+&lt;p&gt;$$x' = f(x, t) = \left&amp;lt;-(x+1)(x+3), 5x + 5t^2 + 2t\right&amp;gt;$$
+$$t \geq 0$$
+$$x_0 \leftarrow \left&amp;lt;-2, \frac{1}{3}\right&amp;gt;$$
+$$h = 1/60$$&lt;/p&gt;
+&lt;p&gt;The following is an screencap from my test program of the solutions given by Euler, Midpoint and RK4:&lt;/p&gt;
+&lt;p&gt;&lt;img src="integrate-field.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Apologies for the lack of axis labels or anything. The red line is the Euler solution. The green line is Midpoint. The blue line is RK4 and the yellow line is the actual solution ($x(t) = \left&amp;lt;-3 + \frac{2}{1+te^{-2}}, t^2+(1/3)e^{-5t}\right&amp;gt;$), but Midpoint, RK4 and the actual solution are so close that only Midpoint shows in this screencap. This screenshot is already very zoomed in, so the difference between Euler and the other methods is very small. For most applications in video games, Euler will be precise enough.&lt;/p&gt;
+&lt;p&gt;Maybe you really, really care about the precision of your particle system. Then you have to choose between one or three additional evaluations. Midpoint will get you an order of magnitude more precision than Euler and only takes one additional function evaluation. But is RK4 worth it?&lt;/p&gt;
+&lt;p&gt;All numerical methods start to suffer roundoff error once $h$ grows too small, and with Euler it turns out you can solve for the $h$ that minimizes error. &lt;em&gt;(N.B. Roundoff error is the error you get when you round off the result of a calculation in order to store it in a float.)&lt;/em&gt; That value is&lt;/p&gt;
+&lt;p&gt;$$h = \sqrt{\frac{2\delta}{M}}$$&lt;/p&gt;
+&lt;p&gt;where $\delta$ is an upper bound for the roundoff error and $M$ is an upper bound for $f'(x, t)$ for any $x, t$. (Burden &amp;amp; Faires, Numerical Analysis 9th ed. p273 Eq. (5.14).) Depending on what floating point data type you use and what $M$ is, you could get different values for this, but if you are generous then you start brushing up against $h = 1/60$, meaning we are already getting about the most you can get out of Euler. The other techniques don't have nice closed-form formulas that describe the $h$ that gives you minimum error, (or at least I don't know of any,) but since many more calculations are happening, roundoff error will be larger. But $h$ is already about as small as it can be with Euler, so at $h=1/60$ going from Midpoint to RK4 may actually grow your error. The Midpoint solution is already quite good, so it seems as though there's no point in going to RK4.&lt;/p&gt;
+&lt;p&gt;If your process is offline and you aren't showing your results in real-time then I would agree that RK4 is the right choice, but for integrating velocity fields for the purposes of rendering particles in realtime, I would argue that Euler is the way to go.&lt;/p&gt;
+&lt;h2&gt;Projectile Motion&lt;/h2&gt;
+&lt;p&gt;This application requires double integrations, once for velocity and once for acceleration. In my setup I have a function of position and velocity $f_a(x, v)$ which gives the sum total of acceleration due to all forces currently acting on an object. Then I have two helper functions that perform linear interpolations along my current velocity and acceleration. These will be my integration functions, one for velocity:&lt;/p&gt;
+&lt;p&gt;$$v_{v_i}(x, h) = v_i + hf_a(x, v_i)$$&lt;/p&gt;
+&lt;p&gt;and one for acceleration&lt;/p&gt;
+&lt;p&gt;$$a_{x_i}(x, h) = f_a(x_i, v) + hf_a(x_i + hv, v)$$&lt;/p&gt;
+&lt;p&gt;$x_i$ and $v_i$ in the above functions are the current position and velocity. (I won't specify the subscripts after this - think of them as being like a closure.) (If you have trouble parsing the math, &lt;a href="https://github.com/BSVino/MathForGameDevelopers/blob/42b3fca1ece04c4f5a86990e406f97f3c69ff64f/game/game.cpp#L600"&gt;try the code version instead&lt;/a&gt;.) I evaluated five methods:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Euler's Method, order 1&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$x_{i+1} = x_i + hv(x_i, 0)$$
+$$v_{i+1} = v_i + ha(v_i, 0)$$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Semi-Implicit Euler's Method, order 1&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$x_{i+1} = x_i + hv(x_i, h)$$
+$$v_{i+1} = v_i + ha(v_i, 0)$$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Verlet, order 2&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$x_{i+1} = 2x_i - x_{i-1} + h^2a(x_i, 0)$$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Midpoint, order 2&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$x_{i+1} = x_i+hv(x_i+hv(x_i, t_i), t_i+h)$$
+$$v_{i+1} = v_i+ha(v_i+ha(x_i, t_i), t_i+h)$$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Runge-Kutta order 4&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;$$k_1 = v(x_i, t_i)$$
+$$k_2 = v(x_i + \frac{1}{2}k_1, t_i + \frac{1}{2}h)$$
+$$k_3 = v(x_i + \frac{1}{2}k_2, t_i + \frac{1}{2}h)$$
+$$k_4 = v(x_i + k_3, t_{i+1})$$
+$$x_{i+1} = x_i + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$$&lt;/p&gt;
+&lt;p&gt;$$k_1 = a(x_i, t_i)$$
+$$k_2 = a(x_i + \frac{1}{2}k_1, t_i + \frac{1}{2}h)$$
+$$k_3 = a(x_i + \frac{1}{2}k_2, t_i + \frac{1}{2}h)$$
+$$k_4 = a(x_i + k_3, t_{i+1})$$
+$$v_{i+1} = v_i + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$$&lt;/p&gt;
+&lt;p&gt;Sidetrack: Euler and S.I. Euler look similar, but note the $h$ in the velocity evaluation in S.I. Euler. In practice, this is the implementation that may be written by a naive programmer. You do something like:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;velocity += dt * get_acceleration();
+position += dt * velocity;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and bam, you actually just wrote S.I. Euler instead of standard Euler. It actually takes more effort to write standard Euler:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;vec3 old_velocity = velocity;
+velocity += dt * get_acceleration();
+position += dt * old_velocity;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But a naive programmer is equally likely to write this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;position += dt * velocity;
+velocity += dt * get_acceleration();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which is equivalent to standard Euler, unless the acceleration is a function of position (as is the case with e.g. orbital mechanics), in which case you get $x_{i+1} = x_i + hv(x_i, h)$,
+$v_{i+1} = v_i + ha(v_i, 0)$, which is garbage that will probably still look mostly OK. Moral of the story: always integrate velocity first!&lt;/p&gt;
+&lt;p&gt;In any case, how did the procedures perform? At $h=1/60$ I examined projectile motion of all of the methods and I found that, while the differences were few and small, Stardard Euler and S.I. Euler were about the same and slightly better than Midpoint/RK4, which were identical and slightly better than Verlet. I found this to be surprising. RK4 is supposed to be an order 4 integrator, but it didn't perform as well as the order 1 integrators. I got similar results when I used arbitrary cubic and quartic functions. But the most interesting results showed up in my tests for orbital mechanics, as might be required in a game like Kerbal Space Program:&lt;/p&gt;
+&lt;p&gt;&lt;img src="integrate-orbital.png" /&gt;&lt;/p&gt;
+&lt;p&gt;The orange cube in the center is the sun. White is Euler, black is S.I. Euler, yellow is Verlet, cyan is Midpoint, and magenta is RK4. The actual solution is an elliptical path that is close enough to S.I. Euler and Verlet as to be covered up by them. So S.I. Euler and Verlet do the best, followed by RK4 and Midpoint, and finally Euler bringing up the rear. More surprising results! RK4 again didn't do so well. Not only that, but it is doing almost exactly as well as Midpoint, even though it's supposed to be two orders better than Midpoint, and only twice as well as Euler.&lt;/p&gt;
+&lt;p&gt;After some research I discovered the reason: S.I. Euler and Verlet are &lt;em&gt;energy preserving&lt;/em&gt; methods, and the other three are not. This means that the sum of potential and kinetic energy is preserved by S.I. Euler and Verlet, but not by the other methods. As the object gets closer to the sun, non-preserving methods add a little bit of altitude each iteration, thereby incleasing potential energy, without reducing velocity/kinetic energy. I mapped the energy of each object to the size of its cube in the preceding screenshot so you can compare. You can see that after 1.5 revolutions Euler is already noticeably larger, and Midpoint/RK4 are slightly larger.&lt;/p&gt;
+&lt;p&gt;You may guess that the non-preserving methods approach the actual solution as $h \to \infty$, and you would be right. But what's the point, when S.I. Euler and Verlet already do so well? Runge-Kutta methods just aren't the best tool for this problem. If you view projectile motion as just a special case of orbital mechanics, the failure of RK4 there makes a bit more sense. If we want more accurate physics simulations in video games then we should be looking at energy-preserving methods rather than just higher-order methods.&lt;/p&gt;
+&lt;p&gt;One more question remains: Why does S.I. Euler seem to do exactly as well as Verlet, when S.I. Euler is order 1 and Verlet is order 2? I played around with many nontrivial functions for $f_a$ including simulating drag, multiple stars, and some weird thrust functions, and I was never able to get anything that caused Verlet to do significantly better (or even different) than S.I. Euler. When I cranked $h$ up to $h = 1/1000$ Verlet started to lose a little bit of energy over time, and when I cranked it up a bit more I started running into precision problems, but other than those cases the two methods always gave almost identical solutions. In fact, for this application (where $a()$ and $v()$ boil down to the same function of acceleration) Verlet and S.I. Euler turn out to be the same. You can see it with some simple manipulations:&lt;/p&gt;
+&lt;p&gt;$$x_{n+1} = x_n + hv_{n+1} \Rightarrow v_n = \frac{x_n - x_{n-1}}{h}$$
+$$x_{n+1} = x_n + hv_{n+1} = x_n + h(v_n + ha_n)$$
+$$ = x_n + h\left(\frac{x_n - x_{n-1}}{h} + ha_n\right) = 2x_n - x_{n-1} + h^2a_n$$&lt;/p&gt;
+&lt;p&gt;so the difference between the two probably turn out to be implementation-dependent, e.g. Verlet is easier to implement on a GPU.&lt;/p&gt;
+&lt;p&gt;The conclusion seems to be that RK4 is usually not the best choice in the context of video games and that one should opt for Verlet or S.I. Euler. S.I. Euler's really not so bad though, honestly. If you fix your timestep (which you're already doing, right?) then the error is small enough to be imperceptible. In one of my calculus videos I used the closed-form projectile motion equation ($x = \frac{1}{2}gt^2 + tv_0 + x_0$) to &lt;a href="https://youtu.be/rqhAOc9gvC4?t=12m47s"&gt;predict the path of a projectile&lt;/a&gt; and as you can see the prediction is close enough that you can't tell the difference. Most video games won't need anything better. When I made &lt;a href="http://digitanks.com"&gt;Digitanks&lt;/a&gt; I didn't know any numerical analysis and I naively used S.I. Euler to show preview lines for projectile paths. It ended up shipping in the game. At the time I thought I was doing something hacky and procrastinating a more correct solution, but as it turns out, sometimes the best thing is to think small.&lt;/p&gt;
+&lt;p&gt;You can find my test code buried in the Math for Game Developers code, here are the interesting parts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/BSVino/MathForGameDevelopers/blob/42b3fca1ece04c4f5a86990e406f97f3c69ff64f/game/game.cpp#L494"&gt;Velocity field simulation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/BSVino/MathForGameDevelopers/blob/42b3fca1ece04c4f5a86990e406f97f3c69ff64f/game/game.cpp#L547"&gt;Orbital mechanics simulation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/BSVino/MathForGameDevelopers/blob/42b3fca1ece04c4f5a86990e406f97f3c69ff64f/game/game.cpp#L923"&gt;Rendering&lt;/a&gt; (there are #if switches to turn different visualizations on and off)&lt;/li&gt;
+&lt;/ul&gt;</description><link>http://www.vinoisnotouzo.com/blog/10.htm</link><guid>http://www.vinoisnotouzo.com/blog/10.htm</guid><pubDate>Sun, 10 Jul 2016 01:00:27 -0000</pubDate></item><item><title>OOP, DOP, and Levels of Abstraction</title><description>&lt;p&gt;The Data-Oriented/OOP-Is-Bad crowd has been making the case lately for preferring to write a single long procedure instead of the oop style kindgom-of-nouns one-class-one-purpose way of doing things. The idea is that separating twenty different concerns into twenty different classes makes code non-linear and more difficult to understand, and it is better to have just one long procedure that does everything necessary to accomplish your task. That's reasonable and I agree with it. But consider this code, which I took from one of my projects (so that I can't be accused of using a contrived example) and modified to take the "long procedure" idea to its absurd conclusion. (Apologies for the lack of syntax highlighting.)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// Turns a text string into a series of quad draw commands
+void Renderer::DrawText(RenderOptions* options, const char* text,
+        ResourceIndex font_index, vec2 position) {
+    RenderQuadCommand c;
+
+    // Set up the render options
+    c.options = *options;
+
+    if (c.options.shader == VInvalid(ShaderIndex)) {
+        c.options.shader = SHADER_TEXT;
+        c.options.enable_depth = 0;
+        c.options.blendmode = Blend::PremultipliedAlpha;
+        c.options.diffuse_texture = render_font-&amp;gt;m_texture;
+    }
+
+    TRenderFont* render_font = &amp;amp;m_resources[font_index].m_font;
+    TRenderTexture* texture = &amp;amp;m_resources[render_font-&amp;gt;m_texture].m_texture;
+    TFont* font = render_font-&amp;gt;m_font_file;
+    TGlyphIndex* codepoint_table = (TGlyphIndex*)((char*)font + font-&amp;gt;m_codepoint_table_offset);
+    PackedChar* glyph_table = (PackedChar_t*)((char*)font + font-&amp;gt;m_glyphs_offset);
+
+    vec2 pen = position;
+
+    // Find the length of the text
+    size_t text_length = 0;
+
+    {
+        const char* text_p = text;
+        while (*text_p)
+            text_length++;
+    }
+
+    // Generate a quad for every letter
+    for (int letter = 0; letter &amp;lt; text_length; letter++) {
+        // Find the glyph of this letter
+        TGlyphIndex glyph_index = VInvalid(TGlyphIndex);
+        if (text[letter] &amp;gt;= 0 &amp;amp;&amp;amp; text[letter] &amp;lt; font-&amp;gt;m_num_codepoints)
+            glyph_index = codepoint_table[text[letter]];
+
+        if (glyph_index == VInvalid(TGlyphIndex))
+            glyph_index = codepoint_table['#'];
+
+        if (glyph_index == VInvalid(TGlyphIndex))
+            continue;
+
+        // Generate a quad that has this glyph on it
+        PackedChar_t* glyph = glyph_table[glyph_index];
+
+        float x0 = (float)glyph-&amp;gt;x0/texture-&amp;gt;m_data.m_width;
+        float x1 = (float)glyph-&amp;gt;x1/texture-&amp;gt;m_data.m_width;
+        float y0 = (float)glyph-&amp;gt;y0/texture-&amp;gt;m_data.m_height;
+        float y1 = (float)glyph-&amp;gt;y1/texture-&amp;gt;m_data.m_height;
+
+        float draw_x0 = pen.x + glyph-&amp;gt;xoff;
+        float draw_y0 = pen.y + glyph-&amp;gt;yoff;
+        float draw_x1 = pen.x + glyph-&amp;gt;xoff2;
+        float draw_y1 = pen.y + glyph-&amp;gt;yoff2;
+
+        c.quad.v1.x = draw_x0;
+        c.quad.v1.y = draw_y0;
+        c.quad.v1.z = 0;
+        c.quad.u1.x = x0;
+        c.quad.u1.y = y0;
+        c.quad.v2.x = draw_x0;
+        c.quad.v2.y = draw_y1;
+        c.quad.v2.z = 0;
+        c.quad.u2.x = x0;
+        c.quad.u2.y = y1;
+        c.quad.v3.x = draw_x1;
+        c.quad.v3.y = draw_y1;
+        c.quad.v3.z = 0;
+        c.quad.u3.x = x1;
+        c.quad.u3.y = y1;
+        c.quad.v4.x = draw_x1;
+        c.quad.v4.y = draw_y0;
+        c.quad.v4.z = 0;
+        c.quad.u4.x = x1;
+        c.quad.u4.y = y0;
+
+        // Append the quad to the render commands list
+        m_render_commands.m_length++;
+        m_render_commands.m_elements = (RenderCommand*)realloc(m_render_commands.m_elements, sizeof(RenderCommand)*(size_t)m_render_commands.m_length);
+        m_render_commands.m_elements[m_render_commands.m_length-1] = c;
+
+        // If this is not the last letter, add kerning
+        if (letter + 1 &amp;lt; text_length) {
+            float kerning;
+
+            TGlyphIndex next_glyph_index = codepoint_table[text[letter+1]];
+
+            // Binary search of the kerning table
+            int l = 0;
+            int r = (int)font-&amp;gt;m_num_kerning_entries - 1;
+            int needle = glyph_index &amp;lt;&amp;lt; 16 | next_glyph_index;
+            int straw;
+            TKerningEntry* kerning_table = (TKerningEntry*)((char*)font + font-&amp;gt;m_kerning_table_offset)
+
+            while (l &amp;lt;= r) {
+                int m = (l + r) &amp;gt;&amp;gt; 1;
+                straw = kerning_table[m].glyph1 &amp;lt;&amp;lt; 16 | kerning_table[m].glyph2;
+                if (needle &amp;lt; straw)
+                    r = m - 1;
+                else if (needle &amp;gt; straw)
+                    l = m + 1;
+                else {
+                    kerning = kerning_table[m].advance;
+                    break;
+                }
+            }
+
+            pen.x += kerning;
+        }
+
+        pen.x += glyph-&amp;gt;xadvance;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I'm sure you didn't just read all that. Not only is there no syntax highlighting (sorry again) but it just does too many things. There's a string length procedure, a binary search, a bunch of table lookups, some error checking code, setup code, and for some crazy reason I've inlined the code to push onto a dynamic-size array. The only procedure call in that code is to realloc(), which can't be inlined.&lt;/p&gt;
+&lt;p&gt;That's obviously absurd. I admit that I'm strawmanning maybe a little; The "OOP is bad" crowd would certainly agree that this is bad code. The reason it's bad is there are too many levels of abstraction in the same procedure. Let's look at it again, but this time anything that's not directly necessary to render text into quads has been pushed out:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// Turns a text string into a series of quad draw commands
+void Renderer::DrawText(RenderOptions* options, const char* text,
+        ResourceIndex font_index, vec2 position) {
+    RenderQuadCommand c;
+
+    // Set up the render options
+    c.options = *options;
+
+    if (c.options.shader == VInvalid(ShaderIndex))
+        SetupShader(&amp;amp;c.options, SHADER_TEXT, render_font-&amp;gt;m_texture);
+
+    TRenderFont* render_font = GetRenderFont(font_index);
+    float texture_width = (float)GetRenderTexture(render_font-&amp;gt;m_texture)-&amp;gt;GetWidth();
+    float texture_height = (float)GetRenderTexture(render_font-&amp;gt;m_texture)-&amp;gt;GetHeight();
+    TFont* font = render_font-&amp;gt;m_font_file;
+
+    vec2 pen = position;
+    size_t text_length = strlen(text);
+
+    // Generate a quad for every letter
+    for (int letter = 0; letter &amp;lt; text_length; letter++) {
+        PackedChar_t* glyph = font-&amp;gt;FindGlyph(text[letter]);
+
+        if (!glyph)
+            continue;
+
+        // Set up the quad to render
+        vec2 quad_min = pen + vec2(glyph-&amp;gt;xoff, glyph-&amp;gt;yoff);
+        vec2 quad_max = pen + vec2(glyph-&amp;gt;xoff2, glyph-&amp;gt;yoff2);
+
+        SetQuadBillboard(&amp;amp;c.quad, quad_min, quad_max);
+
+        vec2 uv_min(glyph-&amp;gt;x0/texture_width, glyph-&amp;gt;y0/texture_height);
+        vec2 uv_max(glyph-&amp;gt;x1/texture_width, glyph-&amp;gt;y1/texture_height);
+
+        SetQuadUVs(&amp;amp;c.quad, uv_min, uv_max);
+
+        m_render_commands.push_back(&amp;amp;c);
+
+        // If this is not the last letter, add kerning
+        if (letter + 1 &amp;lt; text_length) {
+            TGlyphIndex next_glyph_index = font-&amp;gt;GetCodepointTable()[text[letter+1]];
+            pen.x += font-&amp;gt;GetKerning(glyph_index, next_glyph_index);
+        }
+
+        pen.x += glyph-&amp;gt;xadvance;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It's still a bit verbose, but I think it's much easier to follow this code since the irrelevant tasks have been abstracted away.&lt;/p&gt;
+&lt;p&gt;The goal of OOP is to reduce complexity and it does so by adding layers of abstraction. Modern C++ wants you to create the abstraction of a 'Letter' class that handles issues like kerning and quads, so the DrawText procedure doesn't have to know about kerning and quads in order to do its job of rendering text. Add in virtual functions and operator overloading and RAII and move constructors and the result is that a modern C++ application has a hundred layers of useless abstractions. The totality of abstractions makes it difficult to understand the structure and behavior of the program at a high level. The backlash against OOP has been somewhat focused on the excessive abstractions that OOP encourages programmers to write.&lt;/p&gt;
+&lt;p&gt;But the problem isn't with the abstractions, it's with OOP. The code above was made easier to read when I added abstractions. Subroutines are a useful abstraction. I don't need to know exactly how the kerning value is found in order to draw the text. When kerning calculation code is present, the code changes between multiple levels of abstraction in a single procedure. Those context switches are what make the code difficult to understand. Keeping the entire procedure within the same level of abstraction increases the ability of the programmer to understand the code.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/9.htm</link><guid>http://www.vinoisnotouzo.com/blog/9.htm</guid><pubDate>Sat, 07 May 2016 17:24:44 -0000</pubDate></item><item><title>Dispelling Indie Developer Myths</title><description>&lt;p&gt;At the latest GDC I attended the "Virtual Reality Developers Roundtable". (A roundtable is an hour long session in which industry professionals can discuss the current problems and the state of the art in their trade. I don't know why they call it a roundtable, none of the tables are round.) The VR developers roundtable was mostly VR developers from places like Oculus and a handful of VR startups, many with prototypes on hand to show others. I also attended the "Visual Effects Artists Roundtable" which was also attended by senior visual effects artists from established companies like Sledgehammer Games and Double Fine, and even an engineer from Nvidia.&lt;/p&gt;
+&lt;p&gt;But when I went to the "Low Budget Indie Developers Roundtable", it was mainly students and people from other industries who were trying to break into games. Fewer than five, including me, had ever shipped any games. People who were giving advice were largely inexperienced, and as a result I heard a ton of awful advice. I was astonished that such awful advice is still cropping up in such a professional venue, after a decade of indie games. Why hasn't the community been able to disseminate better advice more effectively? And yet it persists, so here is my attempt at clearing up some of the misconceptions I heard. Let's start by going over the questions that were presented to the roundtable.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What engine do you use?&lt;/strong&gt; I believe this was the first question for the people at the roundtable. If memory serves, maybe 60% of the respondents used Unity, 30% used Unreal, and the remaining 10% were split between various engines. My response was that my previous game was on Source, but my next game will be on a custom engine. I hardly recommend using Source, but I think more indie game developers should consider this advice:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Use your own tech.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;It worries me that a strong majority of game developers in 2015 are using one of only two engines. A game engine is a tool, and any tool shapes your thinking. When you hold a hammer, the world looks like a nail. Similarly, when you're using Unity, every game idea looks like a shooter or a platformer. Indies have to innovate to survive, and using an existing engine will encourage you to make an existing game. To make a new game, you need a new engine.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Crowdfunding?&lt;/strong&gt; It seemed like half of the people there had a plan to do some sort of crowdfunding campaign, and the other half had advice for the first half on doing crowdfunding campaigns, and of the whole nobody but myself had actually run a successful one. (Full disclaimer: the successful one that I ran was not for a game, but you know!)&lt;/p&gt;
+&lt;p&gt;Crowdfunding campaigns are not free money. Nobody will give you money for having an amazing game concept. You need to treat a crowdfunding campaign as a sale. In some ways, you need to think of it as an early launch. You need to offer something of value for people to pay for. If you have nothing of value other than the game itself, you need to consider taking another avenue to finding cash.&lt;/p&gt;
+&lt;p&gt;The test I like to use in thinking about crowdfunding is:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Could I make the game on my own, without crowdfunding?&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;If you can make a scaled down version of the game without crowdfunding, then you have something of value to offer your customers. If you have nothing of value then nobody will want to give you money, and your campaign will fail. If you can't make a simpler game on your own, then you have bigger problems than crowdfunding - you need to reconsider your entire strategy.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Finding team members?&lt;/strong&gt; When asked what strategy people had to look for team members to help build their games, most people talked about promising delayed compensation and offering partial ownership. Both of those strategies have serious logistical and psychological problems. Formalizing agreements involving money is difficult enough. What you're essentially asking is for people to work for free and take the risk that they will be screwed. As a general rule, nobody whose work is worth having will be willing to work for free and with the risk that they will be screwed. But how are you supposed to build the world's next amazing game without a team to help you?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Go it alone.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I question the motivation to grow your team in the first place. The assumption is that a better game can be made with eight or twelve people than can be made with one or two people. This is wrong. Each of those additional people adds more overhead and complexity to your game development operation. It's actually more difficult to make a game with a large team than with a small team.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Scope control?&lt;/strong&gt; I don't remember what the actual question was - it was something about game design. The general advice was to think big. If you haven't figured it out from the name of this blog, I disagree. You can't make a big game - you're an indie game designer. You have to pay yourself for every minute of work you spend, and you only have your nights and weekends. You can't make anything approaching the complexity of what large studios put out. Your only recourse is to think deeply about what the core idea of your game is and make that and only that and make that well. At the end of that thinking process, your game will be smaller, but it will be easier to make, your vision will be clearer to players and other developers, and you will be happier making it. I gave a talk on exactly how to do this thinking, &lt;a href="https://www.youtube.com/watch?v=Nztt9kFvObU"&gt;you can watch it here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you follow my other advice then you have a small team and no external sources of cash. You can't afford it any other way, you must:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Think small.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;You should think small, live small, work small, and be small.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How do I do "social" marketing?&lt;/strong&gt; This was one of the topics that had some of the worst advice. It seems that otherwise sensible people turn into buzzword-spewing gibberish machines when the word "social" is mentioned. The common sense of how to communicate with other people is passed over in favor of the dream of a million Twitter followers. I have one simple easy powerful and tweetable recommendation:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Respect your audience.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Don't tweet useless crap just because you think you have to remind your audience that you exist. Don't spy on your audience with creepy analytics suites that tell you their favorite foods and the names of their pet animals. Don't try to sell to them. The people on the other end of the line are just that - real people who will tune you out if you waste their time. Give them something of value or nothing at all.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The legal situation.&lt;/strong&gt; Almost everybody around the table advised that every indie game developer should have a lawyer on retainer. This will probably be the most contentious of my recommendations, but here goes:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Don't lawyer up until you absolutely have to.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Other developers will tell you that you need to lawyer up, they did and they don't regret it. They're rationalizing their sunk costs. I've lawyered up for previous projects and paid my attorney in retainer to draft contracts and so on. In the end I got a bunch of contracts, but the contracts were all signed and then filed in a drawer and forgotten about. Nothing ever become of them. If I hadn't have had them, I don't think things would have been any different, because the thing keeping my team together wasn't contracts, it was trust.&lt;/p&gt;
+&lt;p&gt;Lawyers are good at giving advice. They will tell you that you should lawyer up. But of course, it's in a lawyer's best interest that everyone thinks that they need a lawyer. In reality, there aren't any situations that you as an indie game developer can get yourself into where you benefit from having a lawyer up beforehand. Not getting a lawyer now does not preclude getting a lawyer later, and waiting until you absolutely need one (and can afford one) doesn't make anything worse.&lt;/p&gt;
+&lt;p&gt;If you think that you have a problem with another person or company and need a lawyer to fix your problem, then you misunderstand how the legal system works. Contracts are only worth the amount of money that you're willing to pay a lawyer to enforce them. If you distrust someone enough that you feel you must cement the relationship with legalese, consider whether it's a relationship that you want to be in at all. A legal framework will not help when your team is spiraling the drain. The only thing you can do to avoid messy splits is to retain a strong relationship with your (few) teammates. "Low Budget" means figuring out how to go it without a lawyer, until the glorious day comes when you make a hojillion dollars and you need a lawyer to keep the hounds off your back. Don't bother getting one before that day comes, and trust me, you'll know it when it happens.&lt;/p&gt;
+&lt;p&gt;This was easily the worst session at GDC that I attended. This particular roundtable makes no sense. None of the people with any actual expertise - successful game developers - have any reason to go. The successful ones already form a close community and they talk to each other all year long on Twitter, there's no reason to get together at a roundtable at GDC. As a result, the roundtable is dominated by inexperienced people giving crappy advice, and it probably shouldn't exist.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/8.htm</link><guid>http://www.vinoisnotouzo.com/blog/8.htm</guid><pubDate>Sat, 27 Jun 2015 15:58:44 -0000</pubDate></item><item><title>Gamers, Gates, Puppies, and Internet Culture</title><description>&lt;p&gt;Gamergate is not an anomaly. It affects our industry exclusively, so maybe somewhere in the back of our minds we think that there must be something about gamers or video games that caused this shitstorm of destructive behavior. But let me tell you about Puppygate.&lt;/p&gt;
+&lt;p&gt;The Hugos are the science fiction and fantasy book genre's analogue to the IGF. They are the preeminent awards show for scifi and fantasy - every year all of the big scifi and fantasy authors get together and vote on who wrote the best scifi or fantasy books that year. This year, a group of conservative authors organized to load the ballots with other conservative writers, because they felt that conservative writers weren't being represented adequately in the Hugos. This group was called the Sad Puppies. The Internet shitstorm that ensued when the ballots came out dominated by authors on the Sad Puppy slate was called Puppygate.&lt;/p&gt;
+&lt;p&gt;The Puppies and the Anti-Puppies are divided mostly along political lines. There are large bands of Puppy advocates who harass the "social justice warriors" (a Puppy term for progressive writers) who they perceive as having buried the works of conservative authors. I'm sure there are also large bands of Anti-Puppies who likewise attack Puppies. There are death threats and blogging battles and hey, doesn't all of this sound vaguely familiar?&lt;/p&gt;
+&lt;p&gt;I think the two phenomena are very much related.&lt;/p&gt;
+&lt;p&gt;Both of these phenomena have a shared root cause: the Internet. That's a very broad claim so give me a paragraph or two to back it up.&lt;/p&gt;
+&lt;p&gt;The Internet today is very different from what it was ten years ago. There is a new machine of blogs, portals, and YouTube channels designed to provoke clicks and attract eyeballs by having the most provocative content. It's the eyeball machine. The most provocative emotion, the emotion that is most effective to use to get people to click on something, is anger. Looking at the front page of Yahoo right now I see stories like, "Parents Under Investigation After 11-Year-Old Plays Alone in Yard for 90 Minutes" and "'How I Dressed When I Was 14 vs. How 14-Year-Old Girls Dress Now'" and "The reactions to Donald Trump's &lt;em&gt;outrageous&lt;/em&gt; 2016 speech are absolutely golden". (I admit, I was incited to click on one of these. For research purposes, of course. I refuse to name which one.) This outrage machine, as it is also called, conditions people to be angry about things. The outrage machine teaches us that outrage is the solution to social problems. Don't like something that happened on the Internet? Get outraged!&lt;/p&gt;
+&lt;p&gt;But what happens with all of that outrage? It has to go somewhere. A single person can't fix the problem, but they can contribute by posting a nasty comment and harassing someone on Twitter. Now the world knows about the outrage. It may not solve the problem, but it at least makes the person feel better.&lt;/p&gt;
+&lt;p&gt;Nobody planned for it to work this way. Someone along the line needed to make a buck, and realized that making people angry is a good way to do that. Not any way I would like to make a living, but a lot of other people noticed and started doing the same thing. They didn't intend to condition people to be angry and cause a cultural shift, but here we are. Gamergate, Puppygate, and many more instances such as the puerile attacks from Anonymous are really an inevitable result of these new shifts in social values caused, at least in part, by Internet marketing.&lt;/p&gt;
+&lt;p&gt;I used to love the Internet. It was where I could learn anything I wanted to, communicate with anyone in the world instantly, and share the things I had created with other people. Sure, there were Internet flame wars in 1995, but they were about which was the best text editor or operating system or the occasional political debate, and death threats were not in the picture. Gamergate and Puppygate would never have happened then. Today the Internet is still a good place to share information, but the information superhighway now also serves as the infrastructure of a larger machine.&lt;/p&gt;
+&lt;p&gt;I'm not certain that the Internet's benefit to mankind is outweighed by the harm it has done to, for example, the careers of game developers and fantasy novel writers. Not to mention the damage to our attention spans, the depth of our understanding of knowledge, and the level at which we are willing to engage in media, not just as a society or a country, but as a race. Gamergate is not an anomaly, it's systemic, and it will continue to happen for as long as the eyeball machine remains.&lt;/p&gt;
+&lt;p&gt;I don't think that the inevitable conclusion is that the people who are being harassed in our industry should give up and put up with the shitstorm. (I hope that it ends soon, now would be good.) We need a tactic that can be effective against the monster at hand. Women speaking out about the things that they are forced to endure to make games can change for the better the cultures of the companies they work at, but the Gamergate shitstorm can't be stopped by spreading a message or talking about feelings. We need to change our channels of communication to prevent the outrage from reaching its victims. We need Twitter and the curators of comment sections to devote themselves to zero tolerance policies. The software industry as a whole needs to value the hard work of its creatives over the vitriolic voices of their detractors. We can't ignore the problem and it won't go away, so we need a way to prevent gamergaters and puppygaters from using the Internet's communication channels to harass thousands of hard working people who just love to make amazing things.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/7.htm</link><guid>http://www.vinoisnotouzo.com/blog/7.htm</guid><pubDate>Tue, 16 Jun 2015 07:03:00 -0000</pubDate></item><item><title>Double Action: Postmortem</title><description>&lt;iframe width="853" height="480" src="https://www.youtube.com/embed/Nztt9kFvObU?rel=0" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;p&gt;This is a copy of the talk I gave at ECGC on April 9, 2015. It's about using guiding principles to create meaningful game designs. Enjoy.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/6.htm</link><guid>http://www.vinoisnotouzo.com/blog/6.htm</guid><pubDate>Thu, 09 Apr 2015 13:37:08 -0000</pubDate></item><item><title>Whacking at Screws with Hammers</title><description>&lt;p&gt;This post is about Jai, a new programming language developed by &lt;a href="https://twitter.com/Jonathan_Blow"&gt;Jonathan Blow&lt;/a&gt;. If you're unfamiliar with Jai, I've put up &lt;a href="https://github.com/BSVino/JaiPrimer/blob/master/JaiPrimer.md"&gt;a primer that covers what Jai is and why it exists&lt;/a&gt;, you should read that first. (It's a bit out of date now, I'll get to updating it eventually, but it's enough context for this post.) This post is about why I think Jai has the potential to be a successful language.&lt;/p&gt;
+&lt;p&gt;But first, a disclaimer: I'm not Jon Blow, and I have no association with Jon Blow. The things I say in this post don't represent Blow's opinions. They are my (possibly incorrect) opinions only. (If you are Jon Blow and want me to correct anything in this post, I would be happy to.)&lt;/p&gt;
+&lt;h2&gt;JAI IS BETTER C&lt;/h2&gt;
+&lt;p&gt;If you've skimmed the primer then you've seen some of Jai's cool features, but it's not the features that sold me on Jai. It's the philosophy. Jai is alone among modern languages in that it isn't trying to be a new language. Instead, it's trying to be a better old language. Few languages have been so popular and ubiquitous and C, and C got there more because of its simplicity than its feature list.&lt;/p&gt;
+&lt;p&gt;Many of the properties that made C a successful language are shared by Jai and not shared by other modern languages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Native speed&lt;/strong&gt;. In fact, Jai's SoA features can make it easier to optimize code for modern processors, meaning it won't be surprising to see Jai code run faster than C.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Simple syntaxes&lt;/strong&gt; which can reduce coding iteration times. Lack of arbitrary restrictions such as "everything is a class" or "everything is a function" leaves the decisions of abstraction up to the programmer.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Debugging on the metal&lt;/strong&gt;. No virtual machine lies between a program and the processor. No level of indirection exists between the program and its operation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Deployable anywhere&lt;/strong&gt;. Jai can be run on any platform that C can be run on, which is pretty much every platform.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Easily bindable&lt;/strong&gt;. Jai can interface with any language that C interfaces with, which is all of them, so a C binding is effectively a Jai binding.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In spite of its lack of modern features C hasn't gone away because it's focused. It provides as much direct access to the hardware as is possible while still providing portability between architectures. It doesn't ship with any vector classes, input/output stream classes, database interfaces, user interface mechanisms, image loading, threading tools, or god forbid XML parsers. While most modern languages want to be a platform and offer everything the programmer will ever need, C remains focused on its solitary goal of abstracting architectures. C doesn't need to provide every solution for every programmer, because C is not a platform. Rather, it's just an abstraction of the actual platform, the hardware architecture. Jai takes the same approach, and has the same strengths, but makes quality-of-life and performance improvements on C that will give C developers a reason to consider adopting it.&lt;/p&gt;
+&lt;p&gt;But I think you should think about Jai even if you're not a C programmer.&lt;/p&gt;
+&lt;h2&gt;HAMMERS AND NAILS&lt;/h2&gt;
+&lt;p&gt;Your thinking is shaped by the tools that you use. In more common terms, when you hold a hammer everything looks like a nail. As C and C++ programmers, we have been hammering nails for the past few decades, and we continued to hammer even when our nails slowly turned into screws. The machines that C was designed for 40 years ago no longer exist, (and the machines that C++ was designed for never existed,) and it's time for a language designed to allow the programmer to take advantage of the capabilities of modern processors.&lt;/p&gt;
+&lt;p&gt;It may seem odd that Jai, a language ostensibly for game development, doesn't provide built-in libraries for image loading, audio playback, rendering, vector math, and so on. But consider that no library can provide a single solution for any of these that will be appropriate for all users. When writing a one-size-fits-all solution, you win generality by losing performance and form factor, and you win time in the short run but lose flexibility. Then if you ever have to ditch the general solution for a specific one, you end up losing back your time in the long run.&lt;/p&gt;
+&lt;p&gt;That loss of flexibility is more dangerous than you think, specifically because of the hammer/nail problem. When you use a solution written by someone else for the most general case you don't just lose the ability to solve the problem a different way. You also lose the ability to &lt;em&gt;think about&lt;/em&gt; solving the problem a different way. You lose the ability to &lt;em&gt;realize at all&lt;/em&gt; that the problem can be solved a different way. You come to think about the world as nails and your language as a hammer. Unless you step back to consider why you're holding a hammer in the first place you'll fail to realize there's something wrong with a world where people hammer screws.&lt;/p&gt;
+&lt;p&gt;Jai may not be the language for you, but it is re-evaluating the assumptions of modern languages. Take a closer look at it and see if you're not holding a hammer.&lt;/p&gt;
+&lt;p&gt;Here's a concrete example.&lt;/p&gt;
+&lt;h2&gt;OPTIMIZING FOR DEVELOPER TIME&lt;/h2&gt;
+&lt;p&gt;Some modern languages are built to optimize developer time. To this end the languages provide large class libraries with functionality for anything that might need doing. Performance is not the highest concern. The implicit assumption is that optimizing for developer time can only be done at the cost of running time. That's often true, but the real problem is the assumption that performance isn't that important.&lt;/p&gt;
+&lt;p&gt;If you're shipping something that will be used by other people, then not worrying about performance or leaving it up to the language can bite you. One day your project may be featured on that popular website or get mentioned by some celebrity and you'll suddenly have 100,000 clients using your system. It's too late then to start caring about performance. Twitter made that mistake in their early days when they used Ruby, and we all saw plenty of fail whales. &lt;a href="https://blog.twitter.com/2013/new-tweets-per-second-record-and-how"&gt;They've since switched to Scala&lt;/a&gt; and their performance and stability increased by orders of magnitude. I've seen this in action myself: The Wordpress installation hosting the &lt;a href="http://doubleactiongame.com"&gt;Double Action website&lt;/a&gt; fell over every time a Youtuber released a new video of the game. I had to put up a static page, often for days at a time, to deal with the influxes. But the &lt;a href="http://data.doubleactiongame.com/leaderboard/"&gt;leaderboards&lt;/a&gt;, which I hand-coded in C with some Python support scripts, never faltered. Even when not faced with hundreds of thousands of users, people want their programs to respond quickly and their webpages to load instantly. Developer time optimization is important, but assuming that it's the only issue is a mistake.&lt;/p&gt;
+&lt;p&gt;Part of Jai's philosophy is: Programmers spend a lot of their time reworking code. A language can optimize for development time by reducing the friction in reworking code. We know all of the common ways in which programmers rework code, we do it every day. One common code rework case (especially for game developers) is optimizing running time. Jai has data layout features that reduce friction for this task. By enabling programmers to modify data structures on modern processors to be more performant without having to rework the code that supports them, Jai helps programmers write fast code faster. Jai wins in both running time and development time by making the rework easy.&lt;/p&gt;
+&lt;p&gt;In Jai, that rework, which can potentially gain an order of magnitude improvement, is a single line of code. (&lt;a href="https://www.youtube.com/watch?v=ZHqFrNyLlpA"&gt;See the most recent demo.&lt;/a&gt;) The equivalent rework in C would have been a huge pain. The equivalent rework in an object-oriented virtual-machine modern language would have been impossible. The possibility of doing this sort of rework painlessly, and the value that this sort of rework is important and thus should be painless, are ideas that never occurred to the designers of modern languages. They built tools like garbage collectors and dynamic dispatchers and first-class functions that solve other problems, and when they have performance problems they whack at screws with hammers.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/5.htm</link><guid>http://www.vinoisnotouzo.com/blog/5.htm</guid><pubDate>Sat, 24 Jan 2015 16:54:08 -0000</pubDate></item><item><title>Designing by Sense of Feel</title><description>&lt;p&gt;I make videos on the mathematics of video game development. Recently someone asked me how I use math to balance my video game designs. The answer is, I don't.&lt;/p&gt;
+&lt;p&gt;I use mathematics to implement my design ideas efficiently. Often a design idea is impossible to realize without a solid mathematical foundation. Other times knowing the right math can make it very simple. Hell sometimes I'll just solve some equations because it's fun. But then after the implementation is written, the math goes away and I begin to use a completely different set of tools. I will sometimes use a spreadsheet to guide the balance of major game features, but by and large I don't use mathematics to balance my games. Rather, I design by "sense of feel".&lt;/p&gt;
+&lt;p&gt;What does "sense of feel" mean? I don't know honestly, it's a term I made up that's tactile enough to describe my process. I felt the need to make up a term because that process doesn't really have another name.&lt;/p&gt;
+&lt;p&gt;The "sense of feel" process is:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Write some code.&lt;/li&gt;
+&lt;li&gt;Try the code I wrote.&lt;/li&gt;
+&lt;li&gt;Change the code.&lt;/li&gt;
+&lt;li&gt;Try to forget the restrictions imposed because of the way it's implemented and try the code again.&lt;/li&gt;
+&lt;li&gt;Change the code.&lt;/li&gt;
+&lt;li&gt;Have someone else try the code. Watch them fail to interact with it the way I intended. Think about whether I should teach them my intention or whether I should rewrite my code to match their expectations.&lt;/li&gt;
+&lt;li&gt;Change the code.&lt;/li&gt;
+&lt;li&gt;Have another person look at the code. The less familiar they are with what I'm trying to do, the better.&lt;/li&gt;
+&lt;li&gt;Change the code.&lt;/li&gt;
+&lt;li&gt;Think again about what I'm doing and why. Re-evaluate my design choices and consider whether or not they were successful. Realize the way I did it in the first place was awful. Have ideas to re-implement the entire thing a better way. Debate with myself whether that other way is any better. Debate with myself whether any of my ideas are any good at all. Have an existential crisis.&lt;/li&gt;
+&lt;li&gt;Run out of time and settle for a 20% effort solution that gets me 80% of the way there.&lt;/li&gt;
+&lt;li&gt;Move on to the next feature and go back to step 1.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;It's not quite a process of trial and error. The trials are educated by years of design experience and intuition, and the errors aren't errors at all, they're steps on the path to a (more) solid design. If you wanted something more formal or rigorous, I'm sorry to disappoint you but it doesn't exist.&lt;/p&gt;
+&lt;p&gt;You can't math your way to a well-designed game. There are too many variables, and many of the variables are not quantifiable. There is no equation to express the balance of a nontrivial game. You have to feel it.&lt;/p&gt;
+&lt;p&gt;That said, there are some methods that are common and useful enough that I may do a video series about them at some point. It would cover things like juiciness, risk/reward mechanics, complexity budgets, the psychology of the eye and screen real estate, the role of goals and story in game design, tutorials and game mechanics pedagogy, etc etc, but none of it would involve any math, and a lot of it has already been covered in other places like Extra Credits. It would be a huge departure from my usual format. Even so, it's on my list of things to possibly cover in the future.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/4.htm</link><guid>http://www.vinoisnotouzo.com/blog/4.htm</guid><pubDate>Thu, 25 Dec 2014 11:17:08 -0000</pubDate></item><item><title>A Lesson On Management From the Lamplighters</title><description>&lt;p&gt;On the &lt;a href="http://youtu.be/t8QEOBgLBQU?t=22m9s"&gt;recommendation&lt;/a&gt; of&lt;a href="http://en.wikipedia.org/wiki/Gabe_Newell"&gt; Gabe Newell&lt;/a&gt; I read the book&lt;a href="http://www.amazon.com/Peopleware-Productive-Projects-Second-Edition/dp/0932633439"&gt; Peopleware by Tom DeMarco&lt;/a&gt;. In it, DeMarco argues that giving employees autonomy makes them more productive. Instead of specifying work requirements to an employee and then evaluating the work produced, DeMarco argues that it's better to communicate business constraints to the employee and then let her specify the work requirements. The employee is better suited to draft work requirements anyway, as she has the ground-level information of the operating constraints. And a sufficiently self-motivated employee is more likely to want to live up to her own work standards than the possibly arbitrary standards of a manager. So that's a very broad summary of DeMarco's work, or at least a possibly poor summary of a book I read more than a year ago and don't have access to for reference at the moment.&lt;/p&gt;
+&lt;p&gt;In any case, I've found this management style to be very useful in my own projects. While I was making games with Lunar Workshop, I worked with an artist to whom I would send a list of whichever art pieces I wanted and he would send me back work. One day I decided to put DeMarco's book to work, and I told him to make whatever he wanted and send that to me. By this time we had been working together for years, so I felt that he knew the operating constraints well enough not to produce work that couldn't be used, so there was little risk in having him write his own mission plan. Turns out, it was hugely successful. The work he sent me from then on surprised me in its volume, quality, and creativity. That is to say, he worked more, the results were better, and he did things I never would have thought of. He had some kind of creative energy in a bottle, just waiting to be let out.&lt;/p&gt;
+&lt;p&gt;I'm not arguing that giving complete autonomy is always the best way to do things, and DeMarco covers a few caveats to this system in Peopleware, but I like to try these tactics in different situations to see how they can be implemented in practice. One such time was at a festival called Burning Man in the high desert of Nevada.&lt;/p&gt;
+&lt;p&gt;I know Burning Man has a reputation of being a hangout for hippies, but before you come to the conclusion that I'm a hippie, let me explain that I went to Burning Man as part of a work camp, the Lamplighters. (I think it's very telling of my personality that I went to a week long party in the desert and I worked the whole time.) Every night of the event the Lamplighters light hundreds of kerosene lamps, load them onto yolks in groups of 12, load those yolks onto the backs of about a hundred volunteers, and march in a procession out into the open desert to and raise the lanterns onto spires throughout the city. It sounds pointless and insane but it actually has some utility: With lanterns through the main thoroughfares, the 60,000 people who attend Burning Man can navigate through the sea of neon fluorescent lights and find their way home when a 12 hour long dust storms kick up and all you can see is that row of burning lanterns.&lt;/p&gt;
+&lt;p&gt;As we prepare the procession each evening, my job is to assist people doing their respective jobs: carriers whose job it is to carry 12 lanterns each on their backs, lifters who take the lanterns from the carriers and lift them onto the spires where they would burn through the night, and support people who assist carriers and try to relight extinguished lanterns. One important task for the support people is to point the lifters to the next lantern that should be lifted. This helps avoid a lot of confusion, especially at first when a lifter (who is a likely volunteer doing this for the first time) has to choose among dozens of lamps in a row. If the wrong one is chosen then everything gets out of whack.&lt;/p&gt;
+&lt;p&gt;So seeing an opportunity to put these ideas I have about autonomy-management into action, I pulled a group of four support people aside and explained the important task of pointing to the next lantern. I asked them to decide amongst themselves who would be responsible for this task, or perhaps that they would all share responsibility, so long as there was always a pointer. I gave them complete autonomy as to who of the four would point.&lt;/p&gt;
+&lt;p&gt;It was a disaster. Nobody pointed. The pointing was a shared responsibility among four people, and an individual person may not want to take over a job if it would exclude three others from it, because after all that would be rude. Then everybody gets engrossed in their other tasks and figures that somebody else is probably pointing and the result is that nobody is pointing.&lt;/p&gt;
+&lt;p&gt;The next day I tried a different approach with a new crop of volunteers. I again gathered my group of a four support people and said, "I have a critically important task that I want a volunteer for." Of course, everybody wants to be critically important, so I had no trouble finding people willing to do what is otherwise a very boring task, namely, walking slowly and pointing. After assigning my volunteer to the task of pointing, there was never any problem. Pointing always happened, the lifters never got confused, the procession went smoothly, the city got lit, and all of the partying hippies made it home each night. (Okay, maybe not that last part.)&lt;/p&gt;
+&lt;p&gt;In the end the work got done better and more efficiently when I assigned a task specifically to a single person. Isn't this a significant strike against the idea of autonomy? I don't think so. The improved work wasn't a result of a decrease in autonomy, but rather of an increase in specialization. The support person I assigned as pointer was now absolved of the other responsibilities of support (relighting lanterns, for example) and so could concentrate on doing one thing and doing it well. Likewise, the other three support people did their jobs better as they didn't have to split their minds between pointing and other tasks. As these people were volunteers who were likely doing this for the first time, they probably didn't have the context required to prioritize the work well by themselves. Thus, assigning the work for them also communicates to them their priorities.&lt;/p&gt;
+&lt;p&gt;I would also argue that there was no decrease in autonomy. I didn't tell the support people, "This is your job and you must do this job and you may only do this job." I never told the pointer not to relight any lanterns, and I never told the other support people never to point. For all I know, once they got into the desert they realized that the pointer and the lantern relighter should switch places, and that would still have been fine, if not better.&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;If this example is generalized, it means that the idea of autonomy isn't mutually exclusive with assigning work. Assigning work is beneficial - individuals are more productive when they specialize, that's basic economics. Even the flattest of organizations benefit from structure that increases the specialization of labor, when it doesn't interfere with the "flatness". As the Burning Man case study shows, the structure also benefits the volunteers, and by extension anyone new to a project, by providing a single point of reference for questions and clarifications, and by allowing newcomers to benefit from institutional knowledge. But allowing autonomy means ensuring that the assignments given by the manager act as guidelines rather than to-do lists. Assigning work to new employees can help build the structure an employee needs until the employee gains enough contextual experience to prioritize their own tasks, but the employee (or volunteer carrying a kerosene-filled metal lantern) remains in the best position to decide if, when, and how assignments should be changed.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/3.htm</link><guid>http://www.vinoisnotouzo.com/blog/3.htm</guid><pubDate>Sat, 08 Nov 2014 09:54:08 -0000</pubDate></item><item><title>Viewback - A Video Game Design Tool</title><description>&lt;p&gt;Viewback is a tool that helps game designers conduct usability play tests. It forwards the debug information from your game to your wireless device, where you can see it and the player can't. Now you can diagnose problems with the game while your playtester enjoys her experience. You can see changes to internal game state and send commands to the game in real time.&lt;/p&gt;
+&lt;p&gt;You can watch this video to get an idea for how it works:&lt;/p&gt;
+&lt;iframe width="853" height="480" src="https://www.youtube.com/embed/vzF4IUAhqgI?rel=0" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;p&gt;The Viewback server is written in C and can be easily integrated into any game engine. It uses a permissive MIT license, avoids blocking networking calls, and uses only a few hundred bytes of memory. The server compiles on any C compiler with no dependencies, and the monitor is available for Windows and Android, with OSX and iOS coming soon.&lt;/p&gt;
+&lt;p&gt;Since Viewback is written in C it can be used in just about any game engine environment. Any engine written in C or C++ (Id Tech engines, Unreal, Source) can use Viewback with no extra effort. Users of engines written in Java or C# (Unity, Minecraft) can either write language bindings or implement the Viewback network protocol on their own.&lt;/p&gt;
+&lt;p&gt;This repository contains the header and source code for the Viewback server, which will typically be integrated into your game's client, if your game is multiplayer. It looks like this:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Attached Image" class="attach" height="255" id="ipb-attach-img-23127-0-93367400-1407866018" src="http://uploads.gamedev.net/blogs/monthly_08_2014/blogentry-168782-0-32954200-1407865402_thumb.png" width="550"&gt;&lt;/p&gt;
+&lt;h2&gt;Installation Instructions&lt;/h2&gt;
+&lt;p&gt;First, download the source code from &lt;a class="bbc_url" href="http://github.com/BSVino/Viewback" rel="nofollow external" title="External link"&gt;the GitHub page&lt;/a&gt; and copy all files in the server directory to a directory inside your source tree. If you're familiar with git, you can use a &lt;a class="bbc_url" href="http://git-scm.com/docs/git-submodule" rel="nofollow external" title="External link"&gt;git submodule&lt;/a&gt; for this purpose. Then add viewback.cpp and viewback_util.cpp to your project files. In whichever files you want to use Viewback, add at the top:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include "viewback_util.h"
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now you are ready to implement the API.&lt;/p&gt;
+&lt;h2&gt;Sample Code&lt;/h2&gt;
+&lt;p&gt;This code uses the vb_util interface, which handles memory allocations for you. If you care about how Viewback manages memory, see viewback.h for an interface that allows you to allocate the memory that Viewback uses.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include "viewback_util.h"
+
+vb_util_initialize(); // This is optional.
+
+// A "channel" is a stream of data to be sent to the Viewback monitor for display.
+// Here we create an integer channel called "Health".
+vb_channel_handle_t health_channel;
+vb_util_add_channel("Health", VB_DATATYPE_INT, &amp;amp;amp;health_channel);
+
+// The name you pass in here will be displayed in the server list on the monitor.
+vb_util_server_create("My Amazing Game");
+
+while (game_running())
+{
+    // Call this as many times as you like, but at least once per game frame.
+    vb_server_update(game_time);
+
+    // You can send data once per frame, or only when the data changes. It's up to you.
+    if (!vb_data_send_int(health_channel, player-&amp;gt;GetHealth()))
+        printf("Error sending to Viewback channel\n");
+}
+
+vb_server_shutdown();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At this point you should be ready to use the Viewback monitor to see your data. If you are on the same WiFi network as the Viewback server then the monitor should automatically find the server. If your network is special then you may have to find the IP address and connect manually. Once connected you will asked to select a group to display, and then you'll be able to see your channels.&lt;/p&gt;
+&lt;h2&gt;Features&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Channels&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A channel is a stream of data to be sent to the Viewback monitor for display. Each channel has a type, currently supported types are integer, float, or vector. Depending on the type of the vector the data will be displayed in the monitor in a different panel. Floats and ints will be shown in the time display and vectors will be shown in the 2D display.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Groups&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A group allows you to organize your channels. You can add a channel to a group and then activate a group to see all of the channels in that group. For example an "Animation" group may contain these channels:
+&lt;ul&gt;&lt;li&gt;PlayerYaw&lt;/li&gt;
+&lt;li&gt;ViewVector&lt;/li&gt;
+&lt;li&gt;PlayerVelocity&lt;/li&gt;
+&lt;/ul&gt;&lt;/p&gt;
+&lt;p&gt;while the "PlayerMovement" group would contain
+&lt;ul&gt;&lt;li&gt;PlayerVelocity&lt;/li&gt;
+&lt;li&gt;JumpButton&lt;/li&gt;
+&lt;li&gt;OnGround&lt;/li&gt;
+&lt;/ul&gt;&lt;/p&gt;
+&lt;p&gt;A channel can belong to multiple groups or no groups.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Labels&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Integer channels are often enumerations - i.e. each value represents a state. These states often have names and looking at the names is nicer than looking at the numbers. So for integer channels you can specify that a certain value has a name, and this name will show up in the monitor instead of the number. For example for the PlayerState channel you may have these labels:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;0: Dead
+1: Respawning
+2: Alive
+3: DeathAnimation
+4: Spectating
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Whenever the channel has the value of "2", the monitor will show the "PlayerState" channel as being "Alive".&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Controls&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You can specify controls to modify parameters of your game in real time. These controls appear in the monitor and when they are manipulated by the user, the callbacks that you specify will be triggered in the game code. There are currently two types of controls supported.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Buttons&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;When pressed, a callback function in the game will execute. For example, a "Pause" button could call this function:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void viewback_pause_callback()
+{
+    Game()-&amp;gt;TogglePause();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Other ideas for buttons:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Take a screenshot without leaning over your playtester.&lt;/li&gt;
+&lt;li&gt;Turn cheats on and off.&lt;/li&gt;
+&lt;li&gt;Activate the bug report system.&lt;/li&gt;
+&lt;li&gt;Reset the level if your playtester got stuck.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;Sliders&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;When the slider handle is moved a callback in the game will execute. Sliders can specify integer or float values. Some ideas for sliders:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Adjust the difficulty of the game if your playtester is having trouble (or not enough trouble)&lt;/li&gt;
+&lt;li&gt;Adjust the number of bots in the game&lt;/li&gt;
+&lt;li&gt;Real-time tuning of a design parameter that you've been trying to get right, like the player run speed or jump height.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Console&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If your game has a console, you can forward the console to Viewback. Output from the console will appear in the Viewback monitor and the user can input commands into the monitor which will get forwarded to the game.&lt;/p&gt;
+&lt;p&gt;Don't have a console in your game? No sweat, you can use the Viewback monitor as your console. Just call the Viewback &lt;code&gt;vb_console_append()&lt;/code&gt; function with whatever messages you want to see, and it will show up on the Viewback monitor.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Status&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The status string is like the console but it's always visible. New status lines replace old lines and they never scroll off the screen. Use it for things like the framerate, memory used, and how many monsters are currently spawned.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/2.htm</link><guid>http://www.vinoisnotouzo.com/blog/2.htm</guid><pubDate>Tue, 12 Aug 2014 08:54:08 -0000</pubDate></item><item><title>Used Capacity of the English Language</title><description>&lt;p&gt;A thought experiment.&lt;/p&gt;
+&lt;p&gt;Out of all possible grammatically correct and sensible sentences in the English language, how many of them have been used by humans at some point? Is it $10\%$? $0.1\%$? $0.000001\%$? $10^{-100}\%$?&lt;/p&gt;
+&lt;p&gt;It's not unreasonable to believe that the vast majority of possible English sentences are untapped. But what's the order of magnitude? How much of the boundary of our own language is unexplored? I could easily write a sentence that nobody else in the history of mankind is likely to ever have said, for example the one you are currently reading, but how many such sentences exist? The difference between $0.1\%$ of sentences used and $0.000001\%$ and $10^{-100}\%$ is vast and I think knowing the order of magnitude could be informative.&lt;/p&gt;
+&lt;p&gt;How would one go about estimating this? Perhaps if you took a large repository of text such as the Cambridge library or Google Scholar and counted every unique sentence  (hell, the majority of them will be unique anyway so just count them up) you could get an idea of how many unique sentences have ever been used. How many of those could there be? Say each book has about 100,000 sentences (a quick Google search tells me that's the number of sentences in a Harry Potter novel) and there have been 130 million unique books printed according to Google Books. Most of those have probably been in non-English languages but to compensate for Internet content and unpublished content and to be optimistic I'll use the figure of 130 million. That comes out to 13 trillion sentences. Then you only need to compare it to every possible sensible English sentence.&lt;/p&gt;
+&lt;p&gt;How would one go about estimating that? I'm not a linguist, but I would start by taking every basic grammar structure in the English language and iterating. For example, start with "[noun] [verb]." There are maybe 80,000 nouns and 2,500 verbs, but not all of them are sensible combinations. For example "The dog runs" makes sense and maybe even "the dog talks" could make sense in some contexts (e.g. fiction) but there are probably no contexts for which "the dog billows" makes sense. Having no idea as to the number of noun/verb pairings that are sensible I'm going to guess that we can get about 40,000 of our nouns paired with maybe 1,000 verbs this way, so we already have 40,000,000 sentences right there.&lt;/p&gt;
+&lt;p&gt;Now let's add possible adjectives. There are maybe 40,000 of those, of which perhaps 20,000 can be paired with a noun sensibly. That makes 800 billion sentences so far. There aren't that many adverbs so I'll ignore them. We've only covered a single sentence structure though, the simplest possible sentence. We've not done any compound sentences or sentences with dependent clauses and so on, so 800 billion stands as a lower bound for the number of sensible permutations of a sentence. For a sentence with any complex sort of structure I imagine it would be exponentially greater. We could very easily pass our 13 trillion used sentences, but I'm going to stop estimating because it will get out of hand so quickly and my skills with combinatorics are beginning to fail me.&lt;/p&gt;
+&lt;p&gt;In any case, once all possible combinations of all possible sentence structures are summed, you have the total possible number of sentences in the modern English language. Everything ever written is in there somewhere, every line of Shakespeare, every blog post, even this sentence. How much of that have we managed to find? If we treat the boundaries of the English language as the boundaries of society's capacity to learn and grow, then knowing how much more there is gives us an indication of how much potential we have as the human species.&lt;/p&gt;</description><link>http://www.vinoisnotouzo.com/blog/1.htm</link><guid>http://www.vinoisnotouzo.com/blog/1.htm</guid><pubDate>Sat, 03 May 2014 21:00:08 -0000</pubDate></item>
+	</channel>
+</rss>

@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.1//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Vino Is Not Ouzo - Jorge Rodriguez's Home Page</TITLE>
+<META NAME="author" CONTENT="Jorge 'Vino' Rodriguez">
+<META NAME="description" CONTENT="Vino Is Not Ouzo - Jorge Rodriguez's Home Page">
+<META NAME="keywords" CONTENT="Jorge 'Vino' Rodriguez">
+<style type="text/css">
+body
+{
+width: 800px;
+}
+
+font,th,td,p,h1,h2,h3,li { font-family: Verdana, Arial, Helvetica, sans-serif }
+
+.comment { color: #090; }
+.keyword { color: #00f; }
+
+</style>
+</head>
+<body>
+
+<pre>
+<span class="comment">// Extant pointers may not ever be set to null.</span>
+
+<span class="keyword">int</span> i = 5;
+
+<span class="keyword">int</span>* p1 = <span class="keyword">nullptr</span>;        <span class="comment">// Okay</span>
+<span class="keyword">extant int</span>* p2 = <span class="keyword">nullptr</span>; <span class="comment">// Error. Extant pointers can't be set to null</span>
+<span class="keyword">extant int</span>* p3 = &amp;i;      <span class="comment">// Okay</span>
+<span class="keyword">int</span>* p4 = &amp;i;
+<span class="keyword">extant int</span>* p5 = p4;      <span class="comment">// Okay since p4 is not null in this branch.</span>
+<span class="keyword">extant int</span>* p6 = p1;      <span class="comment">// Error. p1 may be null.</span>
+<span class="keyword">if</span> (p1 != <span class="keyword">nullptr</span>)
+    p6 = p1;              <span class="comment">// Okay since p1 is not null in this branch.</span>
+
+
+<span class="comment">// Nullsafe pointers may be null, but the compiler disallows dereferencing them.
+// When a conditional checks to see if the nullsafe pointer is null, the branch
+// where the pointer is not null allows the pointer to be dereferenced.</span>
+
+<span class="keyword">nullsafe int</span>* p4 = <span class="keyword">nullptr</span>; <span class="comment">// Okay.</span>
+<span class="keyword">int</span> j = *p4;                <span class="comment">// Error. Nullsafe pointers may not be dereferenced.</span>
+<span class="keyword">if</span> (p4 != <span class="keyword">nullptr</span>)
+{
+    <span class="keyword">int</span> j = *p4;            <span class="comment">// Okay since we're in a branch where p4 is never</span>
+                            <span class="comment">// null. In this branch, p4 is dereferenceable.</span>
+    p4 = p1;                <span class="comment">// Okay, but from now on p4 is no longer dereferenceable,</span>
+                            <span class="comment">// and must be checked again for null before use.</span>
+    j = *p4;                <span class="comment">// Error. p4 is no longer dereferenceable.</span>
+}
+
+</pre>
+
+</body>
+</html>

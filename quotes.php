@@ -1,0 +1,103 @@
+
+<?
+if (!isset($lang))
+	$lang = "en";
+
+if ($_GET['lang'] == 'es')
+	$lang = 'es';
+
+function lang_es()
+{
+	global $lang;
+	return $lang == 'es';
+}
+?>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<link href='https://fonts.googleapis.com/css?family=Martel:300,800' rel='stylesheet' type='text/css'>
+<TITLE>Quotes</TITLE>
+</HEAD>
+<BODY>
+<style type="text/css"><!--
+
+#quotes {
+	width: 750px;
+	margin: 0 auto;
+}
+
+font,th,td,p,h1,h2,h3,li,.author,.source,.quote { font-family: 'Martel', serif; }
+
+.author {
+	font-size: small;
+	font-weight: 800;
+}
+.source {
+	color: #888;
+	font-size: smaller;
+	text-decoration: none;
+	font-weight: 300;
+	margin-left: 5px;
+	font-style: italic;
+}
+.source:hover { text-decoration: underline; }
+
+.quote {
+	font-size: small;
+	margin-top: 10px;
+	margin-left: 40px;
+}
+
+--></style>
+
+<div id="quotes">
+<H1 style="text-align: center;">Quotes</H1>
+<?
+$quotes=array(
+	array("Writing is thinking on paper. Anyone who thinks clearly can write clearly, about anything at all.", "William Zinsser", "On Writing Well (p. 147)", "http://www.amazon.com/Writing-Well-30th-Anniversary-Edition/dp/0060891548"),
+	array("The product of mathematics is clarity and understanding. Not theorems, by themselves. Is there, for example any real reason that even such famous results as Fermat's Last Theorem, or the Poincar&eacute; conjecture, really matter? Their real importance is not in their specific statements, but their role in challenging our understanding, presenting challenges that led to mathematical developments that increased our understanding.", "Bill Thurston", "MathOverflow Answer", "http://mathoverflow.net/questions/43690/whats-a-mathematician-to-do/44213#44213"),
+	array("Mathematical knowledge can be transmitted amazingly fast within a subfield. When a significant theorem is proved, it often (but not always) happens that the solution can be communicated in a matter of minutes from one person to another within the subfield. The same proof would be communicated and generally understood in an hour talk to members of the subfield. It would be the subject of a 15- or 20-page paper, which could be read and understood in a few hours or perhaps days by members of the subfield.
+Why is there such a big expansion from the informal discussion to the talk to the paper? One-on-one, people use wide channels of communication that go far beyond formal mathematical language. They use gestures, they draw pictures and diagrams, they make sound effects and use body language. Communication is more likely to be two-way, so that people can concentrate on what needs the most attention. With these channels of communication, they are in a much better position to convey what&rsquo;s going on, not just in their logical and linguistic facilities, but in their other mental facilities as well.
+In talks, people are more inhibited and more formal. Mathematical audiences are often not very good at asking the questions that are on most people&rsquo;s minds, and speakers often have an unrealistic preset outline that inhibits them from addressing questions even when they are asked.
+In papers, people are still more formal. Writers translate their ideas into symbols and logic, and readers try to translate back.
+Why is there such a discrepancy between communication within a subfield and communication outside of subfields, not to mention communication outside mathematics?", "Bill Thurston", "On Proof and Progress in Mathematics (p. 6)", "http://arxiv.org/pdf/math/9404236v1.pdf"),
+	array("Although the general character of print-intelligence would be known to anyone who would be reading this book, you may arrive at a reasonably detailed definition of it by simply considering what is demanded of you as you read this book. You are required, first of all, to remain more or less immobile for a fairly long time. If you cannot do this (with this or any other book), our culture may label you as anything from hyperkinetic to undisciplined; in any case, as suffering from some sort of intellectual deficiency. The printing press makes rather stringent demands on our bodies as well as our minds. Controlling your body is, however, only a minimal requirement. You must also have learned to pay no attention to the shapes of the letters on the page. You must see through them, so to speak, so that you can go directly to the meanings of the words they form. If you are preoccupied with the shapes of the letters, you will be an intolerably inefficient reader, likely to be thought stupid. If you have learned how to get to meanings without aesthetic distraction, you are required to assume an attitude of detachment and objectivity. This includes your bringing to the task what Bertrand Russell called an \"immunity to eloquence,\" meaning that you are able to distinguish between the sensuous pleasure, or charm, or ingratiating tone (if such there be) of the words, and the logic of their argument. But at the same time, you must be able to tell from the tone of the language what is the author's attitude toward the subject and toward the reader. You must, in other words, know the difference between a joke and an argument. And in judging the quality of an argument, you must be able to do several things at once, including delaying a verdict until the entire argument is finished, holding in mind questions until you have determined where, when or if the text answers them, and bringing to bear on the text all of your relevant experience as a counterargument to what is being proposed. You must also be able to withhold those parts of your knowledge and experience which, in fact, do not have a bearing on the argument. And in preparing yourself to do all of this, you must have divested yourself of the belief that words are magical and, above all, have learned to negotiate the world of abstractions, for there are very few phrases and sentences in this book that require you to call forth concrete images.", "Neil Postman", "Amusing Ourselves to Death (p. 23)", "http://www.amazon.com/Amusing-Ourselves-Death-Discourse-Business/dp/014303653X/ref=la_B000AQ1U26_1_2?s=books&ie=UTF8&qid=1431795709&sr=1-2"),
+	array("From Erasmus in the sixteenth century to Elizabeth Eisenstein in the twentieth, almost every scholar who has grappled with the question of what reading does to one's habits of mind has concluded that the process encourages rationality.", "Neil Postman", "Amusing Ourselves to Death (p. 51)", "http://www.amazon.com/Amusing-Ourselves-Death-Discourse-Business/dp/014303653X/ref=la_B000AQ1U26_1_2?s=books&ie=UTF8&qid=1431795709&sr=1-2"),
+	array("You may get a sense of what is meant by context-free information by asking yourself the following question: How often does it occur that information provided you on morning radio or television, or in the morning newspaper, causes you to alter your plans for the day, or to take some action you would not otherwise have taken, or provides insight into some problem you are required to solve? For most of us, news of the weather will sometimes have such consequences; for investors, news of the stock market; perhaps an occasional story about a crime will do it, if by chance the crime occurred near where you live or involved someone you know. But most of our daily news is inert, consisting of information that gives us something to talk about but cannot lead to any meaningful action.", "Neil Postman", "Amusing Ourselves to Death (p. 68)", "http://www.amazon.com/Amusing-Ourselves-Death-Discourse-Business/dp/014303653X/ref=la_B000AQ1U26_1_2?s=books&ie=UTF8&qid=1431795709&sr=1-2"),
+	array("Intelligence is not only the ability to reason; it is also the ability to find relevant material in memory and to deploy attention when needed.", "Daniel Kahneman", "Thinking, Fast and Slow (p. 46)", "http://www.amazon.com/Thinking-Fast-Slow-Daniel-Kahneman/dp/0374533555"),
+	array("Those branches of study should be prescribed, and those modes of instruction adopted, which are best calculated to teach the art of fixing the attention, directing the train of thought, analyzing a subject proposed for investigation; following, with accurate discrimination, the course of argument; balancing nicely the evidence presented to the judgment; awakening, elevating, and controlling the imagination; arranging, with skill, the treasures which memory gathers; rousing and guiding the powers of genius.", "President and Fellows of Yale College", "The Yale Report of 1828 (pg. 7)", "http://collegiateway.org/reading/yale-report-1828/"),
+	array("To new concepts correspond, necessarily, new signs. These we choose in such a way that they remind us of the phenomena which were the occasion for the formation of the new concepts. So the geometrical figures are signs or mnemonic symbols of space intuition and are used as such by all mathematicians. Who does not always use along with the double inequality a > b > c the picture of three points following one another on a straight line as the geometrical picture of the idea \"between\"? Who does not make use of drawings of segments and rectangles enclosed in one another, when it is required to prove with perfect rigor a difficult theorem on the continuity of functions or the existence of points of condensation? Who could dispense with the figure of the triangle, the circle with its center, or with the cross of three perpendicular axes? Or who would give up the representation of the vector field, or the picture of a family of curves or surfaces with its envelope which plays so important a part in differential geometry, in the theory of differential equations, in the foundation of the calculus of variations and in other purely mathematical sciences?
+
+The arithmetical symbols are written diagrams and the geometrical figures are graphic formulas; and no mathematician could spare these graphic formulas, any more than in calculation the insertion and removal of parentheses or the use of other analytical signs.", "David Hilbert", "Lecture delivered before the International Congress of Mathematicians at Paris in 1900", "http://www.clarku.edu/~djoyce/hilbert/"),
+	array("[Students] have been haunted their whole lives by a fear of failure&mdash;often, in the first instance, by their parents' fear of failure. The cost of falling short, even temporarily, becomes not merely practical, but existential
+
+The result is a violent oversion to risk. You have no margin for errors, so you avoid the possibility that you will ever make an error. That is one of the reasons that elite education has become so inimical to learning. As Harry R. Lewis, the former Harvard dean, has written, nobody wants to take a chance on a class they might not ace, so nobody is willing to venture beyond the things they already know and do very well. Experimenting, exploring, discovering new ways to look at the world as well as new capacities within yourself&mdash;the things a college education is supposed to be about&mdash;fall by the wayside.", "William Deresiewicz", "Excellent Sheep (p. 22)", "http://www.excellentsheep.com"),
+	array("What is not reasonable is that we have constructed an educational system that produces highly intelligent, accomplished twenty-two-year-olds who have no idea what they want to do with their lives: no sense of purpose and, what is worse, no understanding of how to go about finding one. Who can follow an existing path but don't have the imagination&mdash;or the courage, or the inner freedom&mdash;to invent their own.", "William Deresiewicz", "Excellent Sheep (p. 25)", "http://www.excellentsheep.com"),
+	array("Our leading colleges and universities pride themselves on their refusal to offer the kinds of vocational majors that most students opt for at most other schools, subjects like communications, business, education, and nursing, but everything they teach is vocational now, because of the spirit in which they teach it. Everything is technocratic&mdash;the development of expertise&mdash;and everything is ultimately justified in technocratic terms. Elite schools like to boast that they teach their students how to think, but all they mean at this point is that they train them in the analytic and rhetorical skills that are necessary for success in business and the professions.", "William Deresiewicz", "Excellent Sheep (p. 63)", "http://www.excellentsheep.com"),
+	array("When kids get to college, they hear a speech or two that urges them to ask the big questions. And when they graduate, they hear another speech or two that urges them to ask the big questions. And in between, they spend four years taking courses that train them to answer the little questions: specialized courses, taught by specialized professors, aimed at specialized students.", "William Deresiewicz", "Excellent Sheep (p. 64)", "http://www.excellentsheep.com"),
+	array("A commercial relationship is exactly the opposite of a pedagogical one. You give your customer what they want, but you don't have any interest in their long-term welfare. It is precisely because you do have an interest in your students' long-term welfare that you don't give them what they want. You question them, and the thing you question them about the most is what they want. Teaching, said Socrates, is the reeducation of desire. If that sounds paternalistic, it is. Professors should be mentors, not commodities or clerks. Education isn't something you consume; it's an experience that you have to give yourself over to. But colleges don't think like that anymore. They see themselves as supplying a market, not guarding a public trust. If they no longer know what the education they offer is about, that's because they're waiting for their students to tell them.", "William Deresiewicz", "Excellent Sheep (p. 69)", "http://www.excellentsheep.com"),
+	array("A professor's most important role is to make you think with rigor: precisely, patiently, responsibly, remorselessly, and not only about your \"deepend ingrained presuppositions,\" as my own mentor, Karl Kroeber, once wrote, but also about your \"most exhilirating new insights, most of with turn out to be fallacious.\" You want some people in your life whose job it is to tell you when you're wrong.", "William Deresiewicz", "Excellent Sheep (p. 81)", "http://www.excellentsheep.com"),
+	array("An undergraduate experience devoted exclusively to career preparation is four years largely wasted. [...] A real education sends you into the world bearing questions, not resumes.", "William Deresiewicz", "Excellent Sheep (p. 82)", "http://www.excellentsheep.com"),
+	array("What about other kinds of entrepreneurship? If you make a computer game, or start a design business, or set up shop as a baker, are you solving a problem or taking advantage of an opportunity? What about the professions: teaching, nursing, social work, academia, the clergy, as well as law or medicine? People are often drawn to them as much for the intrinsic nature of the work they involve (I like little kids; I'm obsessed with archeology; I feel close to God) as for their larger ends. What about creative work? Writing a song is not a response to a problem or even, really to an opportunity; it arises from an inner compulsion, a need to express and communicate.", "William Deresiewicz", "Excellent Sheep (p. 101)", "http://www.excellentsheep.com"),
+	array("You don't just learn a certain body of material when you study the liberal arts; you learn how knowledge is created. You don't aquire information; you debate it. How do we know it is true? What further questions does it raise? What are the premises that underlie the discipline in question (be it biochemistry or political science or American studies), and what are the methods by which it proceeds? You learn, in other words, that there is no \"information,\" strictly speaking; there are only arguments. You do the hard, slow, painstaking work&mdash;four years is scarcely adequate to make a decent start&mdash;of learning to analyze the arguments of others and to make your own in turn: to marshal evidence, to evaluate existing authorities, anticipate objections, synthesize your findings within a logically coherent structure, and communicate the results with clarity and force.", "William Deresiewicz", "Excellent Sheep (p. 150)", "http://www.excellentsheep.com"),
+	array("There is a reason we avoid the truth, with our sociable lies and our psychological blocks: it is usually too hard to bear. \"A book must be an axe,\" said Kafka, \"for the frozen sea within us.\"", "William Deresiewicz", "Excellent Sheep (p. 158)", "http://www.excellentsheep.com"),
+	array("The more I think of it I find this conclusion more impressed upon me,&mdash;that the greatest thing a human soul ever does in this world is to <em>see</em> something, and to tell what it <em>saw</em> in a plain way. Hundreds of people can talk for one who can think, but thousands of people can think for one who can see. To see clearly is poetry, prophecy, and religion,&mdash;all in one.", "John Ruskin", "Modern Painters (p. 262)", "https://books.google.com/books?id=KZ8LAAAAIAAJ&pg=PA262&lpg=PA262&dq=ruskin+%22the+more+i+think+of+it%22&source=bl&ots=8kuMW-D0KV&sig=F35Zc2dSBRt25EwQfgBbSc30YXs&hl=en&sa=X&ved=0ahUKEwjmxYvbvsvJAhUqoYMKHXBSBzkQ6AEIJDAC#v=onepage&q=ruskin%20%22the%20more%20i%20think%20of%20it%22&f=false"),
+	array("The teacher, that professional amateur, teaches not so much his subject as himself. If he is a teacher of literature, he provides for those less experienced in song and story, including the reluctant, the uncooperative, the incompetent, a model of one in whom what seemed dead, mere print on the page, becomes living, a way of life&mdash;palpable fulfillment, transport into the world of wonder.", "Leslie Fiedler", "What Was Literature? (p. 114)", "https://books.google.com/books?id=XJtDAwAAQBAJ&pg=PA61&lpg=PA61&dq=leslie+fiedler+%22teacher+that+professional+amateur%22&source=bl&ots=cvi2Zdk7N0&sig=SJonZzlp3sjq8PIaocA_8MkcC5c&hl=en&sa=X&ved=0ahUKEwiJv9_ewMvJAhVnpoMKHfPyBRIQ6AEIHTAA#v=onepage&q=leslie%20fiedler%20%22teacher%20that%20professional%20amateur%22&f=false"),
+	array("It has wisely been said that vigor is more important than rigor in the use of mathematics by the average man.", "Stanford Goldman", "Frequency Analysis, Modulation and Noise", "http://www.johndcook.com/blog/2016/02/23/rigor-and-vigor-in-mathematics/"),
+	array("Note here that programmers have their own peculiar definition of abstract. When programmers talk about abstraction, they're generally talking about simplified interface over complex inner workings. What's odd about this is that in more general usage, abstract has a connotation of being hard to understand. Something which is abstract has no resemblance to the things of common daily life, and it turns out that most things which programs do are abstract in this sense. And so it shouldn't be surprising that we have great difficulty conceptualizing the components of the typical program in terms of neatly self-contained modules, particularly modules which have any real-world analogue. When we pollute our code with generic entities like managers and factories and services, we're not really making anything easier to understand, we're just putting a happy face on the underlying abstract business, and for every excess layer of abstraction we're getting more abstract<i>ness</i>. In attempting to neatly modularize and label every little fiddley-bit that our program does, we're actually just making our program harder to understand.", "Brian Will", "Object-Oriented Programming is Bad", "https://www.youtube.com/watch?v=QM1iUe6IofM"),
+	array("What I term the \"monad tutorial fallacy,\" then, consists in failing to recognize the critical role that struggling through fundamental details plays in the building of intuition.", "Brent Yorgey", "Abstraction, intuition, and the \"monad tutorial fallacy\"", "https://byorgey.wordpress.com/2009/01/12/abstraction-intuition-and-the-monad-tutorial-fallacy/"),
+	array("Doe Salvia had earlier told me that the major advance in the science of construction over the last few decades has been the perfection of tracking and communication. [...] \"The biggest cause of serious error in this business is a failure of communication,\" O'Sullivan told me.", "Atul Gawande", "The Checklist Maifesto (p. 68, 70)", "https://www.amazon.com/Checklist-Manifesto-How-Things-Right/dp/0312430000"),
+);
+
+foreach ($quotes as $q)
+{
+	echo "<p><div class='author'>" . $q[1] . "<a class='source' href='" . $q[3] . "'>" . $q[2] . "</a></div><div class='quote'>" . str_replace("'", "&rsquo;", str_replace("\n", "<p/>", $q[0])) . "</div></p>";
+}
+
+?>
+<HR>
+</div>
+
+</BODY>
+</HTML>

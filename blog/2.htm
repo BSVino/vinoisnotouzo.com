@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+  <title>Viewback - A Video Game Design Tool - Jorge Rodr&iacute;guez's Blog</title>
+
+  <link href='https://fonts.googleapis.com/css?family=Martel:300,800' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Source Code Pro:300' rel='stylesheet' type='text/css'>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+      },
+      "HTML-CSS": { availableFonts: ["TeX"] }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js">
+  </script>
+
+  <link href="style.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+  <div id="everything">
+
+  <div id='nav'>
+    <em>Think Small - Jorge Rodr&iacute;guez's Blog</em> |
+    <a href="index.htm">Archives</a> |
+    <a href="/">Home</a> |
+    <a href="http://twitter.com/VinoBS">Twitter</a> |
+    <a href="rss.xml">RSS</a>
+  </div>
+
+  <h1>Viewback - A Video Game Design Tool</h1>
+
+<p>Viewback is a tool that helps game designers conduct usability play tests. It forwards the debug information from your game to your wireless device, where you can see it and the player can't. Now you can diagnose problems with the game while your playtester enjoys her experience. You can see changes to internal game state and send commands to the game in real time.</p>
+<p>You can watch this video to get an idea for how it works:</p>
+<iframe width="853" height="480" src="https://www.youtube.com/embed/vzF4IUAhqgI?rel=0" frameborder="0" allowfullscreen></iframe>
+
+<p>The Viewback server is written in C and can be easily integrated into any game engine. It uses a permissive MIT license, avoids blocking networking calls, and uses only a few hundred bytes of memory. The server compiles on any C compiler with no dependencies, and the monitor is available for Windows and Android, with OSX and iOS coming soon.</p>
+<p>Since Viewback is written in C it can be used in just about any game engine environment. Any engine written in C or C++ (Id Tech engines, Unreal, Source) can use Viewback with no extra effort. Users of engines written in Java or C# (Unity, Minecraft) can either write language bindings or implement the Viewback network protocol on their own.</p>
+<p>This repository contains the header and source code for the Viewback server, which will typically be integrated into your game's client, if your game is multiplayer. It looks like this:</p>
+<p><img alt="Attached Image" class="attach" height="255" id="ipb-attach-img-23127-0-93367400-1407866018" src="http://uploads.gamedev.net/blogs/monthly_08_2014/blogentry-168782-0-32954200-1407865402_thumb.png" width="550"></p>
+<h2>Installation Instructions</h2>
+<p>First, download the source code from <a class="bbc_url" href="http://github.com/BSVino/Viewback" rel="nofollow external" title="External link">the GitHub page</a> and copy all files in the server directory to a directory inside your source tree. If you're familiar with git, you can use a <a class="bbc_url" href="http://git-scm.com/docs/git-submodule" rel="nofollow external" title="External link">git submodule</a> for this purpose. Then add viewback.cpp and viewback_util.cpp to your project files. In whichever files you want to use Viewback, add at the top:</p>
+<pre><code>#include "viewback_util.h"
+</code></pre>
+<p>Now you are ready to implement the API.</p>
+<h2>Sample Code</h2>
+<p>This code uses the vb_util interface, which handles memory allocations for you. If you care about how Viewback manages memory, see viewback.h for an interface that allows you to allocate the memory that Viewback uses.</p>
+<pre><code>#include "viewback_util.h"
+
+vb_util_initialize(); // This is optional.
+
+// A "channel" is a stream of data to be sent to the Viewback monitor for display.
+// Here we create an integer channel called "Health".
+vb_channel_handle_t health_channel;
+vb_util_add_channel("Health", VB_DATATYPE_INT, &amp;amp;health_channel);
+
+// The name you pass in here will be displayed in the server list on the monitor.
+vb_util_server_create("My Amazing Game");
+
+while (game_running())
+{
+    // Call this as many times as you like, but at least once per game frame.
+    vb_server_update(game_time);
+
+    // You can send data once per frame, or only when the data changes. It's up to you.
+    if (!vb_data_send_int(health_channel, player-&gt;GetHealth()))
+        printf("Error sending to Viewback channel\n");
+}
+
+vb_server_shutdown();
+</code></pre>
+<p>At this point you should be ready to use the Viewback monitor to see your data. If you are on the same WiFi network as the Viewback server then the monitor should automatically find the server. If your network is special then you may have to find the IP address and connect manually. Once connected you will asked to select a group to display, and then you'll be able to see your channels.</p>
+<h2>Features</h2>
+<p><strong>Channels</strong></p>
+<p>A channel is a stream of data to be sent to the Viewback monitor for display. Each channel has a type, currently supported types are integer, float, or vector. Depending on the type of the vector the data will be displayed in the monitor in a different panel. Floats and ints will be shown in the time display and vectors will be shown in the 2D display.</p>
+<p><strong>Groups</strong></p>
+<p>A group allows you to organize your channels. You can add a channel to a group and then activate a group to see all of the channels in that group. For example an "Animation" group may contain these channels:
+<ul><li>PlayerYaw</li>
+<li>ViewVector</li>
+<li>PlayerVelocity</li>
+</ul></p>
+<p>while the "PlayerMovement" group would contain
+<ul><li>PlayerVelocity</li>
+<li>JumpButton</li>
+<li>OnGround</li>
+</ul></p>
+<p>A channel can belong to multiple groups or no groups.</p>
+<p><strong>Labels</strong></p>
+<p>Integer channels are often enumerations - i.e. each value represents a state. These states often have names and looking at the names is nicer than looking at the numbers. So for integer channels you can specify that a certain value has a name, and this name will show up in the monitor instead of the number. For example for the PlayerState channel you may have these labels:</p>
+<pre><code>0: Dead
+1: Respawning
+2: Alive
+3: DeathAnimation
+4: Spectating
+</code></pre>
+<p>Whenever the channel has the value of "2", the monitor will show the "PlayerState" channel as being "Alive".</p>
+<p><strong>Controls</strong></p>
+<p>You can specify controls to modify parameters of your game in real time. These controls appear in the monitor and when they are manipulated by the user, the callbacks that you specify will be triggered in the game code. There are currently two types of controls supported.</p>
+<p><em>Buttons</em></p>
+<p>When pressed, a callback function in the game will execute. For example, a "Pause" button could call this function:</p>
+<pre><code>void viewback_pause_callback()
+{
+    Game()-&gt;TogglePause();
+}
+</code></pre>
+<p>Other ideas for buttons:</p>
+<ul><li>Take a screenshot without leaning over your playtester.</li>
+<li>Turn cheats on and off.</li>
+<li>Activate the bug report system.</li>
+<li>Reset the level if your playtester got stuck.</li>
+</ul>
+
+<p><em>Sliders</em></p>
+<p>When the slider handle is moved a callback in the game will execute. Sliders can specify integer or float values. Some ideas for sliders:</p>
+<ul>
+<li>Adjust the difficulty of the game if your playtester is having trouble (or not enough trouble)</li>
+<li>Adjust the number of bots in the game</li>
+<li>Real-time tuning of a design parameter that you've been trying to get right, like the player run speed or jump height.</li>
+</ul>
+<p><strong>Console</strong></p>
+<p>If your game has a console, you can forward the console to Viewback. Output from the console will appear in the Viewback monitor and the user can input commands into the monitor which will get forwarded to the game.</p>
+<p>Don't have a console in your game? No sweat, you can use the Viewback monitor as your console. Just call the Viewback <code>vb_console_append()</code> function with whatever messages you want to see, and it will show up on the Viewback monitor.</p>
+<p><strong>Status</strong></p>
+<p>The status string is like the console but it's always visible. New status lines replace old lines and they never scroll off the screen. Use it for things like the framerate, memory used, and how many monsters are currently spawned.</p><br clear="both" />
+<div id="date"><a href="/">Jorge Rodriguez</a>, <a href="2.htm">August 12, 2014</a></div>
+
+<div id="similar"><h2>Similar:</h2><ul><li><a href='8.htm'>Dispelling Indie Developer Myths</a></li><li><a href='10.htm'>Numerical Methods for Physics Integration in Video Games</a></li><li><a href='5.htm'>Whacking at Screws with Hammers</a></li></ul></div>
+</div>
+
+
+<div id="footer">
+</div>
+
+</body>
+<!-- 03 February 2017 at 02:28:31 GMT -->
+</html>

@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+
+jobs:
+  www-deploy:
+    name: "www static -> s3"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+
+    steps:
+      - name: Check out the source code
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Checkout LFS objects
+        run: git lfs checkout
+
+      - name: Print env
+        run: |
+          echo github.event.action: ${{ github.event.action }}
+          echo github.event_name: ${{ github.event_name }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - run: aws s3 sync htdocs s3://vinoisnotouzo.com --delete --content-type text/html
+      - run: aws s3 cp s3://vinoisnotouzo.com/ s3://vinoisnotouzo.com/ --exclude '*' --include '*.zip' --no-guess-mime-type --content-type="application/zip" --metadata-directive="REPLACE" --recursive
+      - run: aws s3 cp s3://vinoisnotouzo.com/ s3://vinoisnotouzo.com/ --exclude '*' --include '*.js' --no-guess-mime-type --content-type="text/javascript" --metadata-directive="REPLACE" --recursive
+      - run: aws s3 cp s3://vinoisnotouzo.com/ s3://vinoisnotouzo.com/ --exclude '*' --include '*.xml' --no-guess-mime-type --content-type="text/xml" --metadata-directive="REPLACE" --recursive
+      - run: aws s3 cp s3://vinoisnotouzo.com/ s3://vinoisnotouzo.com/ --exclude '*' --include '*.css' --no-guess-mime-type --content-type="text/css" --metadata-directive="REPLACE" --recursive
+      - run: aws s3 cp s3://vinoisnotouzo.com/ s3://vinoisnotouzo.com/ --exclude '*' --include '*.jpeg' --include '*.jpg' --no-guess-mime-type --content-type="image/jpeg" --metadata-directive="REPLACE" --recursive
+      - run: aws s3 cp s3://vinoisnotouzo.com/ s3://vinoisnotouzo.com/ --exclude '*' --include '*.png' --no-guess-mime-type --content-type="image/png" --metadata-directive="REPLACE" --recursive
+      - run: aws s3 cp s3://vinoisnotouzo.com/ s3://vinoisnotouzo.com/ --exclude '*' --include '*.ttf' --no-guess-mime-type --content-type="font/ttf" --metadata-directive="REPLACE" --recursive
+
+      - run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths /*
