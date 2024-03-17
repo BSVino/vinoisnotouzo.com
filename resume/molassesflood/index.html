@@ -1,0 +1,388 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/transitional.dtd">
+<html><head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+	<title>Jorge L. Rodr&iacute;guez</title>
+	<script>
+		var queryDict = {};
+		location.search.substr(1)
+			.split("&")
+			.forEach(function(item) {
+				queryDict[item.split("=")[0]] = item.split("=")[1]
+			});
+		console.log(queryDict);
+	</script>
+	<style type="text/css">
+	<!--
+	body {
+	   	font-size: 11pt;
+		width: 720px;
+		margin: auto;
+		font-family: 'Roboto', serif; font-weight: 300;
+	}
+/*font,th,td,p,h1,h2,h3,li,body,div { font-family: Verdana, Arial, Helvetica, sans-serif };*/
+	b { font-size: 13pt; font-weight: 700; }
+	i { font-weight: 400; }
+	div {
+		text-align: left;
+   	}
+
+	#download {
+		position: absolute;
+		margin-left: 420px;
+		width: 300px;
+		text-align: right;
+		font-size: 9pt;
+	}
+
+	#myname {
+		font-size: 26pt;
+		text-align: center;
+		border-bottom: 1px solid black;
+		text-transform: uppercase;
+		font-weight: 400;
+	}
+
+	.myname-firstletter {
+		font-size: 34pt;
+	}
+
+	#allinfo {
+		overflow: auto;
+		width: 100%;
+	}
+
+	#information {
+		float: left;
+		width: 300px;
+		margin-bottom: 0;
+	}
+
+	#informationright {
+		width: 300px;
+		text-align: right;
+		float: right
+	}
+
+	#activitiesleft {
+		float: left;
+		width: 320px;
+		margin-bottom: 0;
+	}
+
+	#activitiesright {
+		width: 300px;
+		text-align: right;
+		float: right;
+	}
+
+	.sectionheader {
+		border-bottom: 1px solid black;
+		text-align: center;
+		font-weight: bold;
+		font-size: 14pt;
+		margin-top: 0.20in;
+		margin-bottom: 0.1in;
+	}
+
+	.allskills {
+		width: 7in;
+		margin: auto;
+		overflow: auto;
+		width: 100%;
+	}
+
+	.skills {
+		margin-left: 0.3in;
+		margin-right: 0.2in;
+		margin-bottom: 0.25in;
+		clear: both;
+	}
+
+	.skills ul {
+		float: left;
+		width: 330px;
+	}
+
+	.experience {
+		margin-left: 0.3in;
+		margin-bottom: 0.25in;
+		margin-right: 0.2in;
+		clear: both;
+	}
+
+	.tasks {
+		margin-left: 0.4in;
+	}
+
+	.task {
+		background-image: url("/resume/bullet.png");
+		background-repeat: no-repeat;
+		background-position: 0px center;
+		background-size: 1.4px 1.4px;
+		padding-left: 30px;
+		text-indent: -20px;
+		margin-left: -30px;
+	}
+
+	.dates {
+		float: right;
+		width: 200px;
+		text-align: right;
+		overflow: hidden;
+	}
+
+	ul {
+		list-style-type: square;
+		margin: 0px;
+	}
+
+
+/* if print
+	a {
+		text-decoration: none;
+		border-bottom: 1px solid #ccc;
+	}
+
+	a:hover {
+		border-bottom: 1px solid #888;
+		text-decoration: none;
+	}
+
+	a:link {
+		color: black;
+       	}
+
+	a:visited {
+		color: black;
+	}
+*/
+	a:link {
+		color: #3333CC;
+	}
+
+	a:visited {
+		color: #6666CC;
+	}
+
+/* if print
+	.skill, .skill:visited {
+		border-bottom: none;
+		text-decoration: none;
+		color: black;
+	}
+*/
+
+	.skill, .skill:visited {
+		border-bottom: 1px dotted black;
+		text-decoration: none;
+		color: black;
+	}
+
+	a.skill {
+		color: black;
+	}
+
+	.pullout {
+		font-size: 42px;
+		float: left;
+		height: 100px;
+		width: 100px;
+		margin-left: -130px;
+		padding-right: 30px;
+	}
+
+	.pullout_video {
+		width: 100px;
+		height: 100px;
+	}
+
+	#ags_pullout{
+		//background-image: url("/resume/crucible.png");
+	}
+
+	#da_pullout_video {
+		//background-image: url("/resume/doubleaction.png");
+	}
+	
+	#da_pullout {
+		margin-top: 65px;
+	}
+
+	#mfgd_pullout_video {
+		//background-image: url("/resume/mfgd.png");
+	}
+	
+	#mfgd_pullout {
+		margin-top: 5px;
+	}
+
+	#vb_pullout_video {
+		//background-image: url("/resume/viewback.png");
+	}
+	
+	#vb_pullout {
+		margin-top: 30px;
+	}
+
+	#dt_pullout_video {
+		//background-image: url("/resume/digitanks.png");
+	}
+	
+	#dt_pullout {
+		margin-top: 50px;
+	}
+
+	#cf_pullout_video {
+		//background-image: url("/resume/calamityfuse.png");
+	}
+	
+	#cf_pullout {
+		margin-top: 40px;
+	}
+
+	.socialicon {
+		width: 14px;
+		height: 14px;
+	}
+
+	ul {
+		list-style-type: none;
+		padding: 0px;
+		margin: 0px;
+	}
+
+	li {
+		background-image: url("/resume/bullet.png");
+		background-repeat: no-repeat;
+		background-position: 0px center;
+		background-size: 1.4px 1.4px;
+		padding-left: 45px;
+		text-indent: -20px;
+	}
+
+	#information {
+		color: #ffffff;
+	}
+
+	#information a {
+		color: #ffffff;
+	}
+	--></style>
+<script>
+$(document).ready(function() {
+	if (queryDict["print"] == 1) {
+		$("#download").hide();
+
+		if (window.print) {
+			window.print();
+		}
+	}
+
+	let page = "https://vinoisnotouzo.com/resume/";
+	$("#resumelink").attr("href", page);
+	$("#resumelink").html(page);
+})
+</script>
+</head>
+<body bgcolor="white" link="blue" vlink="blue" alink="red">
+	<div id="download">
+		<a href="Jorge L. Rodriguez.pdf">pdf</a> | <a target="_blank" href="?print=1">print</a><br><br/>
+	</div>
+	<div id="myname"><span class="myname-firstletter">J</span>orge <span class="myname-firstletter">L. R</span>odr&iacute;guez</div>
+	<div id="allinfo">
+		<div style="text-align: center; margin: 10px;"><em>Video Game Designer</em></div>
+		<div id="informationright">
+			Los Angeles, CA, USA<br>
+			<!--<a id="resumelink" href=""></a>-->
+		</div>
+		<div id="information">
+			<a href="mailto:jorge.rodriguez@hey.com">jorge.rodriguez@hey.com</a><br>
+			(919) 757-3066<br>
+		</div>
+		<br clear=both />
+	</div>
+
+	<div class="sectionheader">EXPERIENCE</div>
+
+	<div id="iw_experience" class="experience">
+		<div class="dates">Mar 2022 - Present</div>
+		<b>Infinity Ward</b>
+		<i>Senior Multiplayer Designer.</i><br/>
+		<div style="font-size: smaller;">Titles: <em>Call of Duty: Warzone 2</em></div>
+		<div class="tasks">
+			<div class="task">Content and systems design and implementation for player progression and equipment systems.</div>
+			<div class="task">Design lead for the World Cup tie-in soccer limited-time mode.</div>
+			<div class="task">Game mode design for DMZ.</div>
+		</div>
+	</div>
+
+
+	<div id="ags_experience" class="experience">
+		<div class="dates">Mar 2019 - Apr 2021</div>
+		<b>Amazon Game Studios</b>
+		<i>Game Designer.</i><br/>
+		<div style="font-size: smaller;">Titles: <em>Crucible, Unannounced</em></div>
+		<div class="tasks">
+			<div class="task">Owner of combat/abilities-related feature (unannounced) implemented in Unreal Engine.</div>
+			<div class="task">Owned Crucible tutorial. Rebuilt tutorial from the ground up after launch.</div>
+			<div class="task">Contributed to the Crucible <em>Heart of the Hives</em> core game mode, owned a canceled game mode.</div>
+			<div class="task">Owned Crucible player progression, including battle pass, challenges, and achievements.</div>
+		</div>
+	</div>
+
+	<div id="ags_experience" class="experience">
+		<div class="dates">Jan 2016 - Mar 2019</div>
+		<b>Amazon Game Studios</b>
+		<i>Gameplay Engineer.</i><br/>
+		<div style="font-size: smaller;">Titles: <em>Crucible</em></div>
+		<div class="tasks">
+			<div class="task">Engineering and technical design for <a target="_blank" href="https://youtu.be/riOjIThEZBw">Crucible</a> in C++ and Lua.</div>
+			<div class="task">Worked closely with designers to implement and maintain game systems.</div>
+		</div>
+	</div>
+
+	<div id="da_experience" class="experience">
+		<div class="dates">Apr 2011 - Dec 2015</div>
+		<b><a target="_blank" href="http://doubleactiongame.com/">Double Action Factory</a></b>
+		<i>Designer, Software Engineer.</i><br/>
+		<div style="font-size: smaller;">Titles: <em>Double Action: Boogaloo</em></div>
+		<div class="tasks">
+			<div class="task">Designed and implemented game mechanics: multiplayer slowmo, mini-objectives, stunt system.</div>
+		</div>
+	</div>
+
+	<div class="experience">
+		<div class="dates">Mar 2010 - Mar 2014</div>
+		<b>Lunar Workshop</b> <i>Designer, Software Engineer.</i><br/>
+		<div style="font-size: smaller;">Titles: <em>Digitanks, Digitanks: Artillery Update</em></div>
+		<div class="tasks">
+			<div class="task">Shipped a 3D artillery-based strategy game, three game modes, online/hotseat multiplayer.</div>
+			<div class="task">Designed the game's systems: unit types, tech tree, combat mechanics.</div>
+		</div>
+	</div>
+
+	<div id="cf_experience" class="experience">
+		<div class="dates">Dec 2006 - Feb 2010</div>
+		<b>Matreya Studios</b>
+		<i>Designer, Software Engineer.</i><br>
+		<div style="font-size: smaller;">Titles: <em>Calamity Fuse [canceled]</em></div>
+		<div class="tasks">
+			<div class="task"><a target="_blank" href="http://youtu.be/HHHmOTO993Y">Designed and implemented</a> game mechanics like sword-fighting, magic system, game modes, and novel movement systems.</div>
+		</div>
+	</div>
+
+	<div class="sectionheader">ADDITIONAL WORK</div>
+	<div class="experience">
+		<div class="tasks">
+			<div class="task"><i><a target="_blank" href="http://en.wikipedia.org/wiki/The_Specialists">The Specialists</a></i>, 2004-07. Multiplayer action shooter, Half-Life engine. Programming, design.</div>
+			<div class="task"><i>Talk - <a target="_blank" href="https://youtu.be/Nztt9kFvObU">"Double Action: Postmortem"</a></i>, East Coast Game Conference, 2015.</div>
+			<div class="task"><i>Education</i>: UCLA Mathematics of Computation, Bachelors of Science.</div>
+		</div>
+	</div>
+
+	<br clear="both" />
+	<br />
+</body></html>
