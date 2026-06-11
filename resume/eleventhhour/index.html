@@ -1,0 +1,386 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/transitional.dtd">
+<html><head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+	<title>Jorge L. Rodr&iacute;guez</title>
+	<script>
+		var queryDict = {};
+		location.search.substr(1)
+			.split("&")
+			.forEach(function(item) {
+				queryDict[item.split("=")[0]] = item.split("=")[1]
+			});
+		console.log(queryDict);
+	</script>
+	<style type="text/css">
+	<!--
+	body {
+	   	font-size: 11pt;
+		width: 720px;
+		margin: auto;
+		font-family: 'Roboto', serif; font-weight: 300;
+	}
+/*font,th,td,p,h1,h2,h3,li,body,div { font-family: Verdana, Arial, Helvetica, sans-serif };*/
+	b { font-size: 13pt; font-weight: 700; }
+	i { font-weight: 400; }
+	div {
+		text-align: left;
+   	}
+
+	#download {
+		position: absolute;
+		margin-left: 420px;
+		width: 300px;
+		text-align: right;
+		font-size: 9pt;
+	}
+
+	#myname {
+		font-size: 26pt;
+		text-align: center;
+		border-bottom: 1px solid black;
+		text-transform: uppercase;
+		font-weight: 400;
+	}
+
+	.myname-firstletter {
+		font-size: 34pt;
+	}
+
+	#allinfo {
+		overflow: auto;
+		width: 100%;
+	}
+
+	#information {
+		float: left;
+		width: 300px;
+		margin-bottom: 0;
+	}
+
+	#informationright {
+		width: 300px;
+		text-align: right;
+		float: right
+	}
+
+	#activitiesleft {
+		float: left;
+		width: 320px;
+		margin-bottom: 0;
+	}
+
+	#activitiesright {
+		width: 300px;
+		text-align: right;
+		float: right;
+	}
+
+	.sectionheader {
+		border-bottom: 1px solid black;
+		text-align: center;
+		font-weight: bold;
+		font-size: 14pt;
+		margin-top: 0.20in;
+		margin-bottom: 0.1in;
+	}
+
+	.allskills {
+		width: 7in;
+		margin: auto;
+		overflow: auto;
+		width: 100%;
+	}
+
+	.skills {
+		margin-left: 0.3in;
+		margin-right: 0.2in;
+		margin-bottom: 0.25in;
+		clear: both;
+	}
+
+	.skills ul {
+		float: left;
+		width: 330px;
+	}
+
+	.experience {
+		margin-left: 0.3in;
+		margin-bottom: 0.25in;
+		margin-right: 0.2in;
+		clear: both;
+	}
+
+	.tasks {
+		margin-left: 0.4in;
+	}
+
+	.task {
+		background-image: url("/resume/bullet.png");
+		background-repeat: no-repeat;
+		background-position: 0px center;
+		background-size: 1.4px 1.4px;
+		padding-left: 30px;
+		text-indent: -20px;
+		margin-left: -30px;
+	}
+
+	.dates {
+		float: right;
+		width: 200px;
+		text-align: right;
+		overflow: hidden;
+	}
+
+	ul {
+		list-style-type: square;
+		margin: 0px;
+	}
+
+
+/* if print
+	a {
+		text-decoration: none;
+		border-bottom: 1px solid #ccc;
+	}
+
+	a:hover {
+		border-bottom: 1px solid #888;
+		text-decoration: none;
+	}
+
+	a:link {
+		color: black;
+       	}
+
+	a:visited {
+		color: black;
+	}
+*/
+	a:link {
+		color: #3333CC;
+	}
+
+	a:visited {
+		color: #6666CC;
+	}
+
+/* if print
+	.skill, .skill:visited {
+		border-bottom: none;
+		text-decoration: none;
+		color: black;
+	}
+*/
+
+	.skill, .skill:visited {
+		border-bottom: 1px dotted black;
+		text-decoration: none;
+		color: black;
+	}
+
+	a.skill {
+		color: black;
+	}
+
+	.pullout {
+		font-size: 42px;
+		float: left;
+		height: 100px;
+		width: 100px;
+		margin-left: -130px;
+		padding-right: 30px;
+	}
+
+	.pullout_video {
+		width: 100px;
+		height: 100px;
+	}
+
+	#ags_pullout{
+		//background-image: url("/resume/crucible.png");
+	}
+
+	#da_pullout_video {
+		//background-image: url("/resume/doubleaction.png");
+	}
+	
+	#da_pullout {
+		margin-top: 65px;
+	}
+
+	#mfgd_pullout_video {
+		//background-image: url("/resume/mfgd.png");
+	}
+	
+	#mfgd_pullout {
+		margin-top: 5px;
+	}
+
+	#vb_pullout_video {
+		//background-image: url("/resume/viewback.png");
+	}
+	
+	#vb_pullout {
+		margin-top: 30px;
+	}
+
+	#dt_pullout_video {
+		//background-image: url("/resume/digitanks.png");
+	}
+	
+	#dt_pullout {
+		margin-top: 50px;
+	}
+
+	#cf_pullout_video {
+		//background-image: url("/resume/calamityfuse.png");
+	}
+	
+	#cf_pullout {
+		margin-top: 40px;
+	}
+
+	.socialicon {
+		width: 14px;
+		height: 14px;
+	}
+
+	ul {
+		list-style-type: none;
+		padding: 0px;
+		margin: 0px;
+	}
+
+	li {
+		background-image: url("/resume/bullet.png");
+		background-repeat: no-repeat;
+		background-position: 0px center;
+		background-size: 1.4px 1.4px;
+		padding-left: 45px;
+		text-indent: -20px;
+	}
+
+	#information {
+		color: #ffffff;
+	}
+
+	#information a {
+		color: #ffffff;
+	}
+
+	.short-experience {
+		margin-left: 0.1in;
+		margin-right: 0.1in;
+		margin-bottom: 0.15in;
+		clear: both;
+	}
+
+	.short-gamename {
+		font-size: 13pt;
+		font-weight: 700;
+	}
+
+	.short-position {
+	}
+
+	.short-dates {
+		font-style: italic;
+
+		float: right;
+		text-align: right;
+	}
+	--></style>
+<script>
+$(document).ready(function() {
+	if (queryDict["print"] == 1) {
+		$("#download").hide();
+
+		if (window.print) {
+			window.print();
+		}
+	}
+
+	let page = "https://vinoisnotouzo.com/resume/";
+	$("#resumelink").attr("href", page);
+	$("#resumelink").html(page);
+})
+</script>
+</head>
+<body bgcolor="white" link="blue" vlink="blue" alink="red">
+	<div id="download">
+		<a href="Jorge L. Rodriguez.pdf">pdf</a> | <a target="_blank" href="?print=1">print</a><br><br/>
+	</div>
+	<div id="myname"><span class="myname-firstletter">J</span>orge <span class="myname-firstletter">L. R</span>odr&iacute;guez</div>
+	<div id="allinfo">
+		<div style="text-align: center; margin: 10px;"><em>Video Game Designer and Programmer</em></div>
+		<div id="informationright">
+			Los Angeles, CA, USA<br>
+			<!--<a id="resumelink" href=""></a>-->
+		</div>
+		<div>
+			<a href="mailto:bs.vino@gmail.com">bs.vino@gmail.com</a><br />
+			(919) 757-3066<br>
+		</div>
+		<br clear=both />
+	</div>
+
+	<div class="sectionheader">EXPERIENCE</div>
+
+	<div class="short-experience">
+		<span class="short-gamename">YOU BECOME FROG 🐸</span> <span class="short-position">Combat and Systems Designer</span> <span class="short-dates">Lunar Workshop, Jun 2026</span><br />
+		<ul>
+			<li>Design and implementations for all characters, weapons, enemies, and progression in Unreal Angelscript.</li>
+		</ul>
+	</div>
+	<div class="short-experience">
+		<span class="short-gamename">Eclipse Breaker</span> <span class="short-position">Combat and Systems Designer</span> <span class="short-dates">Lunar Workshop, Nov 2025</span><br />
+		<ul>
+			<li>Design and implementations for all characters, weapons, enemies, and progression in Unreal Blueprint.</li>
+		</ul>
+	</div>
+	<div class="short-experience">
+		<span class="short-gamename">Unannounced</span> <span class="short-position">Senior Multiplayer Designer</span> <span class="short-dates">Infinity Ward</span><br />
+		<ul>
+			<li>Gameplay and systems design and scripting implementation.</li>
+		</ul>
+	</div>
+	<div class="short-experience">
+		<span class="short-gamename">Call of Duty: Modern Warfare III</span> <span class="short-position">Senior Multiplayer Designer</span> <span class="short-dates">Infinity Ward, Aug 2023</span><br />
+		<ul>
+			<li>Implementation of all of the Zombies challenges.</li>
+		</ul>
+	</div>
+	<div class="short-experience">
+		<span class="short-gamename">Call of Duty: Warzone 2</span> <span class="short-position">Senior Multiplayer Designer</span> <span class="short-dates">Infinity Ward, Nov 2022</span><br />
+		<ul>
+			<li>Gameplay and systems design and scripting implementation.</li>
+		</ul>
+	</div>
+	<div class="short-experience">
+		<span class="short-gamename">Call of Duty: Modern Warfare II</span> <span class="short-position">Senior Multiplayer Designer</span> <span class="short-dates">Infinity Ward, Oct 2022</span><br />
+		<ul>
+			<li>Gameplay and systems design and scripting implementation.</li>
+		</ul>
+	</div>
+	<div class="short-experience">
+		<span class="short-gamename">Crucible</span> <span class="short-position">Game Designer II</span> <span class="short-dates">Amazon Game Studios, May 2020</span><br />
+		<ul>
+			<li>Achievements, challenges, battle pass, and game modes design and scripting implementation.</li>
+		</ul>
+	</div>
+	<div class="short-experience">
+		<span class="short-gamename">Double Action: Boogaloo</span> <span class="short-position">Combat and Systems Designer</span> <span class="short-dates">Double Action Factory, Oct 2014</span><br />
+		<span class="short-gamename">Digitanks</span> <span class="short-position">Combat and Systems Designer</span> <span class="short-dates">Lunar Workshop, Nov 2010</span><br />
+	</div>
+
+	<div class="experience">
+		<div class="task"><i>Education</i>: UCLA Mathematics of Computation, Bachelors of Science.</div>
+	</div>
+
+
+	<br clear="both" />
+	<br />
+</body></html>
